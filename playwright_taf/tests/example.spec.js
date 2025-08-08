@@ -1,18 +1,28 @@
-import { test, expect } from '@playwright/test';
+import { test, expect  } from '../fixtures/pageFixtures';
 
-test('has title', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+const testData = {
+  defaultProductsCount: 16,
+  shoppPageTitle: 'Typescript React Shopping cart',
+  productToAdd: 'Skater Black Sweatshirt',
+};
 
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
+test('Verify default product cards count', async ({ shopPage  }) => {
+  await shopPage.open();
+  await expect(shopPage.page).toHaveTitle(testData.shoppPageTitle);
+  const cardsCount = await shopPage.getProductCardsCount();
+  expect(cardsCount).toEqual(testData.defaultProductsCount);
 });
 
-test('get started link', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
-
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Get started' }).click();
-
-  // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
+test('Product can be added to cart', async ({ shopPage  }) => {
+  await shopPage.open();
+  await shopPage.checkLoaded();
+  await shopPage.addProductToCart(testData.productToAdd);
+  await shopPage.cart.checkLoaded();
+  const productRow = shopPage.getProductRowInCart(testData.productToAdd);
+  await expect(productRow.rootEl()).toBeVisible();
+  const cartCounterText = await shopPage.cart.getCounterText();
+  expect(cartCounterText).toEqual('1');
+  await shopPage.cart.closeButton().click();
+  await shopPage.cart.checkClosed();
+  expect(await shopPage.getCartCounterText()).toEqual('1');
 });
