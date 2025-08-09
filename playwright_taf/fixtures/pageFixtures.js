@@ -1,5 +1,5 @@
 import { test as baseTest } from '@playwright/test';
-import ShopPage from '../po/shop.page';
+import ShopPage from '../po/pages/shop.page';
 
 export const test = baseTest.extend({
   shopPage: async ({ page }, use) => {

@@ -1,7 +1,7 @@
-import ProductCard from "./productCard.component";
-import Cart from "./cart.component";
-import ProductRowInCart from "./productRowInCart.component";
-import { expect } from '@playwright/test'
+import ProductCard from "../components/productCard.component";
+import Cart from "../components/cart.component";
+import ProductRowInCart from "../components/productRowInCart.component";
+import { waitForElement } from "../../utils/helpers";
 
 class ShopPage {
   constructor (page) {
@@ -15,7 +15,7 @@ class ShopPage {
   }
 
   checkLoaded () {
-    return expect(this.page.locator('[class^="Product__Container"]').first()).toBeVisible();
+    return waitForElement(this.page.locator('[class^="Product__Container"]').first());
   }
 
   getProductCardsCount () {

@@ -1,6 +1,9 @@
 // @ts-check
 import { defineConfig, devices } from '@playwright/test';
 import path from 'path';
+import fs from 'fs';
+
+const allureResultsPath = path.join(__dirname, 'artifacts/allure-results');
 
 /**
  * Read environment variables from file.
@@ -13,8 +16,18 @@ import path from 'path';
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
+
+function clearAllureResults() {
+  if (fs.existsSync(allureResultsPath)) {
+    fs.rmSync(allureResultsPath, { recursive: true, force: true });
+    console.log(`Cleared Allure results directory: ${allureResultsPath}`);
+  }
+}
+clearAllureResults();
+
 export default defineConfig({
   testDir: './tests',
+  outputDir: path.join(__dirname, 'artifacts/test-results'),
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -25,7 +38,11 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
-    ['allure-playwright'],
+    ['allure-playwright', {
+        resultsDir: 'artifacts/allure-results',
+        clearFiles: true, 
+      }
+    ],
     ["list"]
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -34,7 +51,7 @@ export default defineConfig({
     baseURL: 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure'
   },
 

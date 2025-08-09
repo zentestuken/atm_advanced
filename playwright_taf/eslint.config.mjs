@@ -11,9 +11,8 @@ export default defineConfig([
         '**/node_modules/**',
         '**/test-results/**',
         '**/playwright-report/**',
-        '**//playwright/.cache/**',
-        '**/allure-results/**',
-        '**/allure-report/**',
+        '**/playwright/.cache/**',
+        '**/artifacts/**',
         '**/eslint.config.mjs',
         '**/playwright.config.js'
     ],
@@ -32,5 +31,10 @@ export default defineConfig([
       },
     },
     extends: ["js/recommended"],
+    rules: {
+      'no-console': 'warn',
+      'playwright/no-skipped-test': 'error',
+      'playwright/no-focused-test': 'error',
+    },
   },
 ]);

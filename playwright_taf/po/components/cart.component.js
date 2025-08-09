@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test'
+import { waitForElement } from "../../utils/helpers";
 
 class Cart {
   constructor (page) {
@@ -8,13 +8,13 @@ class Cart {
   closeButton () { return this.rootEl().locator('button[class^="Cart__CartButton"]').filter({ hasText: 'X' }).first(); }
   emptyMessageBlock () { return this.rootEl().locator('div[class^="CartProducts__CartProductsEmpty"]'); }
   checkoutButton () { return this.rootEl().locator('button[class^="Cart__CheckoutButton"]'); }
-  subTotalLabel () { return this.rootEl().locator('div[class^="Cart__SubPriceValue"]'); }
+  subTotalLabel () { return this.rootEl().locator('[class^="Cart__SubPriceValue"]'); }
 
   checkLoaded () {
-    return expect(this.rootEl().locator('div[class^="Cart__CartContentHeader"]')).toBeVisible();
+    return waitForElement(this.rootEl().locator('div[class^="Cart__CartContentHeader"]'));
   }
   checkClosed () {
-    return expect(this.rootEl().locator('div[class^="Cart__CartContentHeader"]')).toBeHidden();
+    return waitForElement(this.rootEl().locator('div[class^="Cart__CartContentHeader"]'), { isVisible: false });
   }
   getProductRowsCount () {
     const rows = this.rootEl().locator('[class^="CartProduct__Container"]');

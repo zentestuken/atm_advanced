@@ -1,10 +1,9 @@
-
-# Playwright
 node_modules/
+# Playwright
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-#Allure
-/allure-results/
-/allure-report/
+
+# All test artifacts
+/artifacts/
