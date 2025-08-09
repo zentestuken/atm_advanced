@@ -97,7 +97,7 @@ export default defineConfig({
     url: 'http://localhost:3000',
     cwd: path.resolve(__dirname, '../app'),
     reuseExistingServer: !process.env.CI, 
-    timeout: 20 * 1000,
+    timeout: 40 * 1000,
   },
 });
 
