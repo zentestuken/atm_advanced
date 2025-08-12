@@ -12,6 +12,7 @@ jobs:
       matrix:
         project:
           - playwright_taf
+          - playwright_taf_runners
 
     steps:
       - uses: actions/checkout@v4

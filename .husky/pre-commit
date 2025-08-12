@@ -4,3 +4,9 @@ if [ -d "playwright_taf" ]; then
   cd playwright_taf && npm run lint-fix || exit 1
   cd ..
 fi
+
+if [ -d "playwright_taf_runners" ]; then
+  echo "Running lint in playwright_taf_runners..."
+  cd playwright_taf_runners && npm run lint-fix || exit 1
+  cd ..
+fi
