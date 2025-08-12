@@ -37,7 +37,6 @@ test('Subtotal calculated correctly when products added to cart', async ({ shopP
   await expect(secondProductRow.priceLabel()).toHaveText(getPriceLabelForPrices(testData.products[1].price));
   expect(await shopPage.cart.getCounterText()).toEqual('2');
   await expect(shopPage.cart.subTotalLabel()).toHaveText(getPriceLabelForPrices([testData.products[0].price, testData.products[1].price]));
-  aaa
 });
 
 
