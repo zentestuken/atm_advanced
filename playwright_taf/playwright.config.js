@@ -4,6 +4,7 @@ import path from 'path';
 import fs from 'fs';
 
 const allureResultsPath = path.join(__dirname, 'artifacts/allure-results');
+const serverUrl = 'http://localhost:3000';
 
 /**
  * Read environment variables from file.
@@ -48,7 +49,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:3000',
+    baseURL: serverUrl,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'retain-on-failure',
@@ -93,8 +94,8 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npm run start && sleep 5',
-    url: 'http://localhost:3000',
+    command: 'npm run start',
+    url: serverUrl,
     cwd: path.resolve(__dirname, '../app'),
     reuseExistingServer: !process.env.CI, 
     timeout: 40 * 1000,
