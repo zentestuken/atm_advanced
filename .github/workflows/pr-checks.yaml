@@ -20,9 +20,9 @@ jobs:
           node-version: '20'
 
       - name: Install
-        run: npm i
+        run: npm ci
         working-directory: ${{ matrix.project }}
 
       - name: Lint
-        run: npm run lint-fix
+        run: npm run lint
         working-directory: ${{ matrix.project }}

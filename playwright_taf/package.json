@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "generate-report": "allure generate artifacts/allure-results --clean -o artifacts/allure-report",
+    "lint": "eslint .",
     "lint-fix": "eslint . --fix",
     "pretest": "npm run lint-fix",
     "test": "playwright test",
