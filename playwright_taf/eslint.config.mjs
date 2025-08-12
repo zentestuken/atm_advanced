@@ -14,7 +14,8 @@ export default defineConfig([
         '**/playwright/.cache/**',
         '**/artifacts/**',
         '**/eslint.config.mjs',
-        '**/playwright.config.js'
+        '**/playwright.config.js',
+        '../*',
     ],
     plugins: {
       js,
