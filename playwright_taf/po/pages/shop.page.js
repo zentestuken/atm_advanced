@@ -1,7 +1,6 @@
 import ProductCard from "../components/productCard.component";
 import Cart from "../components/cart.component";
 import ProductRowInCart from "../components/productRowInCart.component";
-import { waitForElement } from "../../utils/helpers";
 
 class ShopPage {
   constructor (page) {
@@ -14,13 +13,8 @@ class ShopPage {
     return this.page.goto(this.url)
   }
 
-  checkLoaded () {
-    return waitForElement(this.page.locator('[class^="Product__Container"]').first());
-  }
-
-  getProductCardsCount () {
-    const cards = this.page.locator('[class^="Product__Container"]');
-    return cards.count();
+  get productCards () {
+    return this.page.locator('[class^="Product__Container"]');
   }
 
   getProductCard (productName) {
@@ -40,17 +34,16 @@ class ShopPage {
   }
 
   getSizeFilter (size) {
-    return this.page.locator('[class^="Filter__Checkbox"]').filter({ hasText: size })[0];
+    return this.page.getByRole('button', { name: size });
   }
 
-  getCartCounterText () {
-    const locator = this.page.locator('[title="Products in cart quantity"]');
-    return locator.textContent();
+  get getCartCounter () {
+    return this.page.locator('[title="Products in cart quantity"]');
   }
 
   addProductToCart (productName) {
     const productCard = this.getProductCard(productName);
-    return productCard.addToCartButton().click();
+    return productCard.addToCartButton.click();
   }
 
   hoverOverProductCard (productName) {
