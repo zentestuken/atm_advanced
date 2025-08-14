@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { context } from './setup.js';
+import { context } from '../vitest-setup/setup';
 import { getPriceLabelForPrices, handleCheckoutAlert } from '../utils/helpers.js';
 import testData from './testData.js';
 

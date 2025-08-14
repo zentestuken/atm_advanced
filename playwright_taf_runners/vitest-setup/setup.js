@@ -1,10 +1,10 @@
 import { beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 import { chromium } from '@playwright/test';
 import ShopPage from '../po/pages/shop.page';
+import { baseUrl } from './global-setup';
 
 let browser;
 const context = {};
-const baseUrl = 'http://localhost:3000';
 
 beforeAll(async () => {
   browser = await chromium.launch();
