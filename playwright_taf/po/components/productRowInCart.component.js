@@ -4,7 +4,7 @@ export default class ProductRowInCart {
   }
 
   get plusButton () { return this.rootEl.getByRole('button', { name: '+' }); }
-  get minusButton () { return this.rootEl.getByRole('button', { name: '+' }); }
+  get minusButton () { return this.rootEl.getByRole('button', { name: '-' }); }
   get priceLabel () { return this.rootEl.locator('div[class^="CartProduct__Price"] p'); }
 
   increaseQuantity () {
