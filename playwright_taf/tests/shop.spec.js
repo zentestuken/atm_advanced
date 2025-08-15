@@ -13,14 +13,28 @@ test('Verify default product cards count', async ({ shopPage  }) => {
 });
 
 test('Product can be added to cart', async ({ shopPage  }) => {
-  await shopPage.addProductToCart(testData.products[0].name);
-  await expect(shopPage.cart.contentBlock).toBeVisible();
-  const productRow = shopPage.getProductRowInCart(testData.products[0].name);
-  await expect(productRow.rootEl).toBeVisible();
-  await expect(shopPage.cart.counter).toHaveText('1');
-  await shopPage.cart.closeButton.click();
-  await expect(shopPage.cart.contentBlock).toBeHidden();
-  await expect(shopPage.getCartCounter).toHaveText('1');
+  test.step('When product is  added to cart', async () => {
+    await shopPage.addProductToCart(testData.products[0].name);
+  });
+  
+  test.step('Then the cart should show added product', async () => {
+    await expect(shopPage.cart.contentBlock).toBeVisible();
+    const productRow = shopPage.getProductRowInCart(testData.products[0].name);
+  });
+
+  test.step('And the cart should show products counter', async () => {
+    await expect(productRow.rootEl).toBeVisible();
+    await expect(shopPage.cart.counter).toHaveText('1');
+  });
+
+  test.step('When cart is closed', async () => {
+    await shopPage.cart.closeButton.click();
+    await expect(shopPage.cart.contentBlock).toBeHidden();
+  });
+
+  test.step('Then the cart should show products counter', async () => {
+    await expect(shopPage.cart.counter).toHaveText('1');
+  });
 });
 
 test('Subtotal calculated correctly when products added to cart', async ({ shopPage  }) => {
