@@ -1,0 +1,49 @@
+{
+  "name": "playwright_taf_runners",
+  "version": "1.0.0",
+  "description": "Playwright TAF for a Shopping cart app (with Vitest runner)",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "lint-fix": "eslint . --fix",
+    "pretest": "npm run lint-fix",
+    "test": "cross-env THREADS=2 vitest run",
+    "generate-report": "allure generate artifacts/allure-results --clean -o artifacts/allure-report",
+    "get-report": "npm run generate-report && allure open artifacts/allure-report"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zentestuken/atm_advanced.git"
+  },
+  "keywords": [
+    "playwright",
+    "Node.js",
+    "test",
+    "automation"
+  ],
+  "author": "Yauhen Viazau",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zentestuken/atm_advanced/issues"
+  },
+  "homepage": "https://github.com/zentestuken/atm_advanced#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.32.0",
+    "@eslint/json": "^0.13.1",
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^24.2.0",
+    "@vitest/ui": "^3.2.4",
+    "allure-commandline": "^2.34.1",
+    "allure-js-commons": "^3.3.3",
+    "allure-vitest": "^3.3.3",
+    "cross-env": "^10.0.0",
+    "eslint": "^9.32.0",
+    "eslint-plugin-playwright": "^2.2.2",
+    "eslint-plugin-vitest": "^0.5.4",
+    "globals": "^16.3.0",
+    "lint-staged": "^16.1.4",
+    "playwright": "^1.54.2",
+    "vitest": "^3.2.4",
+    "wait-on": "^8.0.4"
+  }
+}
