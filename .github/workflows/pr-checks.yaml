@@ -17,6 +17,7 @@ jobs:
         project:
           - playwright_taf
           - playwright_taf_runners
+          - playwright_taf_bdd
 
     steps:
       - uses: actions/checkout@v4
