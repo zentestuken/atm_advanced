@@ -2,9 +2,12 @@ import { test, expect  } from '../fixtures/pageFixtures';
 import { getPriceLabelForPrices } from '../utils/helpers';
 import testData from './testData';
 
-test('Verify default product cards count', async ({ shopPage  }) => {
+test.beforeEach(async ({ shopPage }) => {
   await shopPage.open();
   await expect(shopPage.productCards).not.toHaveCount(0);
+});
+
+test('Verify default product cards count', async ({ shopPage  }) => {
   await expect(shopPage.page).toHaveTitle(testData.shopPageTitle);
   await expect(shopPage.productCards).toHaveCount(testData.defaultProductsCount);
 });
