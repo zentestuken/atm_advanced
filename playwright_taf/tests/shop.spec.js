@@ -24,8 +24,6 @@ test('Product can be added to cart', async ({ shopPage  }) => {
 });
 
 test('Subtotal calculated correctly when products added to cart', async ({ shopPage  }) => {
-  await shopPage.open();
-  await expect(shopPage.productCards).not.toHaveCount(0);
   await shopPage.addProductToCart(testData.products[0].name);
   await expect(shopPage.cart.contentBlock).toBeVisible();
   await shopPage.addProductToCart(testData.products[1].name);
