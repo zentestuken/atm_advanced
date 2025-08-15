@@ -1,0 +1,28 @@
+name: pr-checks
+run-name: PRs to main - install packages and run lint
+on: 
+  pull_request:
+    branches: 
+       - main
+jobs:
+  install_and_lint:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        project:
+          - playwright_taf
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install
+        run: npm ci
+        working-directory: ${{ matrix.project }}
+
+      - name: Lint
+        run: npm run lint
+        working-directory: ${{ matrix.project }}

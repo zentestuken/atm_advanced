@@ -1,0 +1,6 @@
+# playwright_taf linting
+if [ -d "playwright_taf" ]; then
+  echo "Running lint in playwright_taf..."
+  cd playwright_taf && npm run lint-fix || exit 1
+  cd ..
+fi

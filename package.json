@@ -1,0 +1,24 @@
+{
+  "name": "atm_advanced",
+  "version": "1.0.0",
+  "description": "Solutions for EPAM ATM Advanced mentoring program tasks",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zentestuken/atm_advanced.git"
+  },
+  "author": "Yauhen Viazau",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zentestuken/atm_advanced/issues"
+  },
+  "homepage": "https://github.com/zentestuken/atm_advanced#readme",
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.4"
+  }
+}
