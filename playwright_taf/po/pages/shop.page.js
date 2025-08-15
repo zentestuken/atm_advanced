@@ -38,7 +38,7 @@ class ShopPage {
   }
 
   get getCartCounter () {
-    return this.page.locator('[title="Products in cart quantity"]');
+    return this.page.getByTitle('Products in cart quantity');
   }
 
   addProductToCart (productName) {
