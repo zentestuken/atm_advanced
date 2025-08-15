@@ -13,8 +13,6 @@ test('Verify default product cards count', async ({ shopPage  }) => {
 });
 
 test('Product can be added to cart', async ({ shopPage  }) => {
-  await shopPage.open();
-  await expect(shopPage.productCards).not.toHaveCount(0);
   await shopPage.addProductToCart(testData.products[0].name);
   await expect(shopPage.cart.contentBlock).toBeVisible();
   const productRow = shopPage.getProductRowInCart(testData.products[0].name);
