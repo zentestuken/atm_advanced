@@ -1,16 +1,17 @@
-import ProductCard from "../components/productCard.component";
-import Cart from "../components/cart.component";
-import ProductRowInCart from "../components/productRowInCart.component";
+import ProductCard from "../components/productCard.component.js";
+import Cart from "../components/cart.component.js";
+import ProductRowInCart from "../components/productRowInCart.component.js";
 
 class ShopPage {
-  constructor (page) {
+  constructor (page, baseUrl) {
     this.url = '/'
+    this.baseUrl = baseUrl;
     this.page = page
     this.cart = new Cart(page);
   }
 
   open () {
-    return this.page.goto(this.url)
+    return this.page.goto(`${this.baseUrl}${this.url}`)
   }
 
   get productCards () {
