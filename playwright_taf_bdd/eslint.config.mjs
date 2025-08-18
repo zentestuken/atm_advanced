@@ -29,6 +29,8 @@ export default defineConfig([
         page: true,
         test: true,
         expect: true,
+        require: true,
+        module: true,
       },
     },
     extends: ["js/recommended"],

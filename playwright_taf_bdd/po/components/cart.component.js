@@ -1,24 +1,24 @@
 class Cart {
-  constructor (page) {
+  constructor(page) {
     this.rootEl = page.locator('[class^="Cart__Container"]');
   }
 
-  get closeButton () { return this.rootEl.getByRole('button', { name: 'X' }); }
-  get emptyMessageBlock () { 
-    return this.rootEl.locator('div[class^="CartProducts__CartProductsEmpty"]'); 
+  get closeButton() { return this.rootEl.getByRole('button', { name: 'X' }); }
+  get emptyMessageBlock() {
+    return this.rootEl.locator('div[class^="CartProducts__CartProductsEmpty"]');
   }
-  get checkoutButton () { return this.rootEl.getByRole('button', { name: 'Checkout' }); }
-  get subTotalLabel () { return this.rootEl.locator('[class^="Cart__SubPriceValue"]'); }
+  get checkoutButton() { return this.rootEl.getByRole('button', { name: 'Checkout' }); }
+  get subTotalLabel() { return this.rootEl.locator('[class^="Cart__SubPriceValue"]'); }
 
-  get contentBlock () {
+  get contentBlock() {
     return this.rootEl.locator('div[class^="Cart__CartContent-"]');
   }
-  get productRows () {
+  get productRows() {
     return this.rootEl.locator('[class^="CartProduct__Container"]');
   }
-  get counter () {
+  get counter() {
     return this.rootEl.locator('div[class^="Cart__CartQuantity"]');
   }
 }
 
-export default Cart;
+module.exports = Cart;

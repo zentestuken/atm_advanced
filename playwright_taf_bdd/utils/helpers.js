@@ -1,14 +1,14 @@
-import { expect } from '@playwright/test';
+const { expect } = require('@playwright/test');
 
-export const getPriceLabelForPrices = (prices) => {
+const getPriceLabelForPrices = (prices) => {
   let priceLabels = Array.isArray(prices) ? prices : [prices];
   const sum = priceLabels
     .reduce((acc, priceLabel) => acc + parseFloat(priceLabel), 0)
     .toFixed(2);
   return new RegExp(`^\\$\\s*${sum}`);
-}
+};
 
-export async function handleCheckoutAlert(page, subtotal) {
+async function handleCheckoutAlert(page, subtotal) {
   return new Promise((resolve, reject) => {
     let timeoutId;
     timeoutId = setTimeout(() => {
@@ -26,3 +26,8 @@ export async function handleCheckoutAlert(page, subtotal) {
     });
   });
 }
+
+module.exports = {
+  getPriceLabelForPrices,
+  handleCheckoutAlert
+};

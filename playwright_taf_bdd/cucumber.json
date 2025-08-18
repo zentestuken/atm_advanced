@@ -1,0 +1,14 @@
+{
+  "default": {
+    "require": [
+      "./features/step_definitions/**/*.js",
+      "./features/support/**/*.js",
+      "./features/step_definitions/world.js"
+    ],
+    "format": ["allure-cucumberjs/reporter", "pretty"],
+    "formatOptions": {
+      "resultsDir": "./artifacts/allure-results"
+    },
+    "publishQuiet": true
+  }
+}
