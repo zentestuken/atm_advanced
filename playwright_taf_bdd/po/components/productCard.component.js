@@ -1,6 +1,8 @@
 class ProductCard {
   constructor(page, productName) {
-    this.rootEl = page.locator('[class^="Product__Container"]').filter({ hasText: productName }).first();
+    this.rootEl = page.locator('[class^="Product__Container"]').filter({
+      has: page.locator(`p[class^="Product__Title"]:has-text("${productName}")`)
+    }).first();
   }
 
   get addToCartButton() {

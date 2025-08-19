@@ -9,6 +9,7 @@
     "formatOptions": {
       "resultsDir": "./artifacts/allure-results"
     },
-    "publishQuiet": true
+    "publishQuiet": true,
+    "parallel": 2
   }
 }

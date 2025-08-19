@@ -48,3 +48,11 @@ Then('{string} product row should have quantity {string}', async function (produ
   const productRow = this.shopPage.getProductRowInCart(productName);
   await expect(productRow.descriptionBlock).toHaveText(new RegExp(`Quantity: ${quantity}$`));
 });
+
+Then('the following product cards shown:', async function (productNamesList) {
+  const productNames = productNamesList.split('\n').map(product => product.trim());
+  for (const productName of productNames) {
+    const productCard = this.shopPage.getProductCard(productName);
+    await expect(productCard.rootEl).toBeVisible();
+  };
+});

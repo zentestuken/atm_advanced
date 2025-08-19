@@ -25,7 +25,14 @@ When('the product {string} is removed from the cart', async function (productNam
   await productRow.removeButton.click();
 });
 
-When('the user clicks plus button for {string} product row', async function (productName) {
+When(/^the user clicks (plus|minus) button for "([^"]+)" product row$/, async function (buttonName, productName) {
   const productRow = this.shopPage.getProductRowInCart(productName);
-  await productRow.increaseQuantity();
+  if (buttonName === 'plus') await productRow.increaseQuantity();
+  else if (buttonName === 'minus') await productRow.decreaseQuantity();
+  else throw new Error(`Unknown button name: ${buttonName}`);
+});
+
+When('{string} size filter selected', async function (filterName) {
+  const filterCheckbox = this.shopPage.getSizeFilter(filterName);
+  await filterCheckbox.click();
 });

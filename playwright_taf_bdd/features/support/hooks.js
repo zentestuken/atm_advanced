@@ -1,4 +1,4 @@
-const { Before, After, Status } = require('@cucumber/cucumber');
+const { Before, After, BeforeAll, AfterAll, Status } = require('@cucumber/cucumber');
 const ShopPage = require('../../po/pages/shop.page.js');
 const path = require('path');
 const { ContentType } = require("allure-js-commons");
@@ -38,4 +38,14 @@ After(async function (testCase) {
       await this.browser.close();
     }
   }
+});
+
+BeforeAll(function () {
+  // eslint-disable-next-line no-console
+  console.log('Starting tests...'); // Don't really have a need for BeforeAll hook
+});
+
+AfterAll(function () {
+  // eslint-disable-next-line no-console
+  console.log('\nAll tests finished!'); // Don't really have a need for AfterAll hook
 });

@@ -35,7 +35,7 @@ class ShopPage {
   }
 
   getSizeFilter(size) {
-    return this.page.getByRole('button', { name: size });
+    return this.page.locator(`input[type="checkbox"][value="${size}"]`);
   }
 
   get getCartCounter() {
