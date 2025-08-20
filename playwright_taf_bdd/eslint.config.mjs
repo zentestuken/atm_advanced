@@ -24,13 +24,12 @@ export default defineConfig([
     languageOptions: {
       globals: {
         ...globals.browser,
+        ...globals.node,
         browser: true,
         context: true,
         page: true,
         test: true,
         expect: true,
-        require: true,
-        module: true,
       },
     },
     extends: ["js/recommended"],

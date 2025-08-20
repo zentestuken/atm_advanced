@@ -2,14 +2,13 @@
   "default": {
     "require": [
       "./features/step_definitions/**/*.js",
-      "./features/support/**/*.js",
-      "./features/step_definitions/world.js"
+      "./setup/**/*.js"
     ],
-    "format": ["allure-cucumberjs/reporter", "pretty"],
+    "format": ["allure-cucumberjs/reporter"],
     "formatOptions": {
       "resultsDir": "./artifacts/allure-results"
     },
     "publishQuiet": true,
-    "parallel": 2
+    "parallel": 1
   }
 }

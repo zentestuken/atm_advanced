@@ -32,7 +32,7 @@ When(/^the user clicks (plus|minus) button for "([^"]+)" product row$/, async fu
   else throw new Error(`Unknown button name: ${buttonName}`);
 });
 
-When('{string} size filter selected', async function (filterName) {
-  const filterCheckbox = this.shopPage.getSizeFilter(filterName);
-  await filterCheckbox.click();
+When('the user clicks on {string} size filter', async function (size) {
+  const sizeFilter = this.shopPage.getSizeFilter(size);
+  await sizeFilter.click();
 });

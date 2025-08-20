@@ -3,12 +3,14 @@ const { chromium } = require('playwright');
 var { setDefaultTimeout } = require('@cucumber/cucumber');
 
 setDefaultTimeout(15 * 1000);
+
+process.env.BASEURL = 'http://localhost:3000';
 class CustomWorld {
   constructor({ attach }) {
     this.browser = null;
     this.page = null;
     this.context = {};
-    this.baseUrl = 'http://localhost:3000';
+    this.baseUrl = process.env.BASEURL;
     this.attach = attach;
   }
 

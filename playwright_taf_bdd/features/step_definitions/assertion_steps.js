@@ -4,7 +4,7 @@ const {
   getPriceLabelForPrices,
 } = require('../../utils/helpers');
 
-Then('{int} product cards should be shown', async function (productCardsCount) {
+Then('the amount of product cards shown should be {int}', async function (productCardsCount) {
   await expect(this.shopPage.productCards).toHaveCount(productCardsCount);
 });
 
@@ -40,7 +40,7 @@ Then('the cart subtotal should be {string}', async function (subtotal) {
   await expect(this.shopPage.cart.subTotalLabel).toHaveText(getPriceLabelForPrices(subtotal));
 });
 
-Then('checkout alert is shown with correct message', async function () {
+Then('checkout alert should be shown with correct message', async function () {
   await this.context.checkoutAlert;
 });
 
@@ -49,10 +49,16 @@ Then('{string} product row should have quantity {string}', async function (produ
   await expect(productRow.descriptionBlock).toHaveText(new RegExp(`Quantity: ${quantity}$`));
 });
 
-Then('the following product cards shown:', async function (productNamesList) {
+Then('the following product cards should be shown:', async function (productNamesList) {
   const productNames = productNamesList.split('\n').map(product => product.trim());
   for (const productName of productNames) {
     const productCard = this.shopPage.getProductCard(productName);
     await expect(productCard.rootEl).toBeVisible();
   };
+});
+
+Then(/"([^"]+)" size filter should be (checked|unchecked)/, async function (size, status) {
+  const sizeFilter = this.shopPage.getSizeFilter(size);
+  if (status === 'checked') await expect(sizeFilter.checkbox).toBeChecked();
+  else await expect(sizeFilter.checkbox).not.toBeChecked();
 });

@@ -1,6 +1,7 @@
 const ProductCard = require("../components/productCard.component.js");
 const Cart = require("../components/cart.component.js");
 const ProductRowInCart = require("../components/productRowInCart.component.js");
+const SizeFilter = require("../components/sizeFilter.component.js");
 
 class ShopPage {
   constructor(page, baseUrl) {
@@ -35,11 +36,8 @@ class ShopPage {
   }
 
   getSizeFilter(size) {
-    return this.page.locator(`input[type="checkbox"][value="${size}"]`);
-  }
-
-  get getCartCounter() {
-    return this.page.getByTitle('Products in cart quantity');
+    // return this.page.locator('[class^="Filter__Container"]').getByRole('checkbox').filter({ hasText: size }).first();
+    return new SizeFilter(this.page, size);
   }
 
   addProductToCart(productName) {
