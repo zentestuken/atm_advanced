@@ -1,23 +1,21 @@
 const { setWorldConstructor } = require('@cucumber/cucumber');
 const { chromium } = require('playwright');
-var { setDefaultTimeout } = require('@cucumber/cucumber');
+const { setDefaultTimeout } = require('@cucumber/cucumber');
+const config = require('../config');
 
-setDefaultTimeout(15 * 1000);
-
-process.env.BASEURL = 'http://localhost:3000';
+setDefaultTimeout(config.timeouts.step); // Cucumber step timeout
 class CustomWorld {
   constructor({ attach }) {
     this.browser = null;
     this.page = null;
     this.context = {};
-    this.baseUrl = process.env.BASEURL;
     this.attach = attach;
   }
 
   async openBrowser() {
-    this.browser = await chromium.launch({ headless: true });
+    this.browser = await chromium.launch(config.browserOptions);
     this.page = await this.browser.newPage();
-    this.page.setDefaultTimeout(30000);
+    this.page.setDefaultTimeout(config.timeouts.command); // Playright command timeout
   }
 
   async closeBrowser() {

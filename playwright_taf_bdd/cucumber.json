@@ -1,14 +1,15 @@
 {
   "default": {
     "require": [
-      "./features/step_definitions/**/*.js",
+      "./tests/step_definitions/**/*.js",
       "./setup/**/*.js"
     ],
+    "paths": ["./tests/features/**/*.feature"],
     "format": ["allure-cucumberjs/reporter"],
     "formatOptions": {
       "resultsDir": "./artifacts/allure-results"
     },
     "publishQuiet": true,
-    "parallel": 1
+    "parallel": 2
   }
 }

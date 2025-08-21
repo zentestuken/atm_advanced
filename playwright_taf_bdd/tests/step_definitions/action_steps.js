@@ -3,8 +3,9 @@ const {
   handleCheckoutAlert,
 } = require('../../utils/helpers');
 
-Given('the user is on the Shop page', async function() {
-  await this.shopPage.open();
+Given('the user is on the {string} page', async function(pageName) {
+  this.currentPage  = this.pageManager.get(pageName);
+  await this.currentPage .open();
 });
 
 When('the product {string} is added to cart', async function (productName) {

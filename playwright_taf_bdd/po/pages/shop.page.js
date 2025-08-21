@@ -2,17 +2,17 @@ const ProductCard = require("../components/productCard.component.js");
 const Cart = require("../components/cart.component.js");
 const ProductRowInCart = require("../components/productRowInCart.component.js");
 const SizeFilter = require("../components/sizeFilter.component.js");
+const config = require("../../config.js");
 
 class ShopPage {
-  constructor(page, baseUrl) {
+  constructor(page) {
     this.url = '/';
-    this.baseUrl = baseUrl;
     this.page = page;
     this.cart = new Cart(page);
   }
 
   open() {
-    return this.page.goto(`${this.baseUrl}${this.url}`);
+    return this.page.goto(`${config.baseUrl}${this.url}`);
   }
 
   get productCards() {

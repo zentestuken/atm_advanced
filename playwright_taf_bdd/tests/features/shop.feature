@@ -1,7 +1,7 @@
 Feature: Shopping cart
 
   Background:
-    Given the user is on the Shop page
+    Given the user is on the "Shop" page
 
     @productList
     Scenario: Verify default shop page state
