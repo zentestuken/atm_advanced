@@ -1,0 +1,51 @@
+{
+  "name": "unit-testing-with-mocks-home-task",
+  "version": "1.0.0",
+  "description": "a project used for the unit testing with NodeJS home task",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "lint-fix": "eslint . --fix",
+    "start-server": "node ./src/server/server.js",
+    "pretest": "npm run lint-fix",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stranger2626/unit-testing-with-mocks-home-task.git"
+  },
+  "author": "Matsvei.Murashka",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stranger2626/unit-testing-with-mocks-home-task/issues"
+  },
+  "homepage": "https://github.com/stranger2626/unit-testing-with-mocks-home-task#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint"
+    }
+  },
+  "nyc": {
+    "include": [
+      "src/data_handlers/user_data_handler.js"
+    ]
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.10.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jest": "^28.14.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "husky": "^4.3.0",
+    "jest": "^30.0.5",
+    "mocha": "^8.1.3",
+    "nock": "^14.0.10",
+    "nyc": "^15.1.0"
+  }
+}
