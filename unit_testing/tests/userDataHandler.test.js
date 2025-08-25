@@ -1,31 +1,20 @@
 const UserDataHandler = require('../src/data_handlers/user_data_handler.js')
 const nock = require('nock')
-
-const testUserData = {
-  id: 2,
-  name: 'Ervin Howell',
-  username: 'Antonette',
-  email: 'Shanna@melissa.tv',
-  address: {
-    street: 'Victor Plains',
-    suite: 'Suite 879',
-    city: 'Wisokyburgh',
-    zipcode: '90566-7771',
-    geo: [Object]
-  },
-  phone: '010-692-6593 x09125',
-  website: 'anastasia.net',
-  company: {
-    name: 'Deckow-Crist',
-    catchPhrase: 'Proactive didactic contingency',
-    bs: 'synergize scalable supply-chains'
-  }
-}
+const { baseUrl, mockUserData, testUserData } = require('./testData.js')
 
 let userDataHandler
 
 beforeEach(() => {
   userDataHandler = new UserDataHandler()
+  if (process.env.MOCK) {
+    nock(baseUrl)
+      .get('/users')
+      .reply(200, mockUserData)
+  }
+})
+
+afterEach(() => {
+  nock.cleanAll()
 })
 
 describe('General tests', () => {
@@ -36,13 +25,13 @@ describe('General tests', () => {
   })
 
   test('loadUsers should throw error when network request fails', async () => {
-    nock('http://localhost:3000')
+    nock.cleanAll()
+    nock(baseUrl)
       .get('/users')
       .replyWithError('Connection refused')
     await expect(userDataHandler.loadUsers())
       .rejects
       .toThrow('Failed to load users data: Error: Connection refused')
-    nock.cleanAll()
   })
 
   test('getUserEmailsList should return emails list', async () => {

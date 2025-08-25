@@ -8,8 +8,11 @@ const config = {
   // The glob patterns Jest uses to detect test files
   testMatch: ['**/tests/**/*.test.js'],
 
-  // Disable Jest's coverage when using nyc
-  collectCoverage: true
+  // Indicates whether the coverage information should be collected while executing the test
+  collectCoverage: true,
+
+  // An array of glob patterns indicating a set of files for which coverage information should be collected
+  collectCoverageFrom: ['src/data_handlers/user_data_handler.js']
 
   // All imported modules in your tests should be mocked automatically
   // automock: false,
@@ -22,9 +25,6 @@ const config = {
 
   // Automatically clear mock calls, instances, contexts and results before every test
   // clearMocks: true,
-
-  // Indicates whether the coverage information should be collected while executing the test
-  // collectCoverage: false,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
   // collectCoverageFrom: ['src/data_handlers/user_data_handler.js'],

@@ -8,7 +8,8 @@
     "lint-fix": "eslint . --fix",
     "start-server": "node ./src/server/server.js",
     "pretest": "npm run lint-fix",
-    "test": "jest"
+    "test": "jest",
+    "test-mock": "npm run pretest && cross-env MOCK=true jest"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "cross-env": "^10.0.0",
     "express": "^4.17.1"
   },
   "devDependencies": {
