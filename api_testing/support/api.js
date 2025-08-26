@@ -21,7 +21,7 @@ export const APIRequestAxios = async (path, method = 'GET', body = {}) => {
   const response = {
     status: responseData.status,
     body: responseData.data,
-    error: (typeof responseData.error === 'undefined') ? 'No errors' : await responseData.error
+    error: await responseData.error
   }
   if (responseData.status > 299 && typeof responseData.error === 'undefined') response.error = response.body
   console.log(`API request (Axios):

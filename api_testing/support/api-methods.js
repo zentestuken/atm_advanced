@@ -13,7 +13,7 @@ const switchClients = () => {
 const APIRequest = switchClients()
 
 export const registerUser = async (email, password, username) => {
-  return APIRequest('/users', 'POST',
+  const response = await APIRequest('/users', 'POST',
     {
       user: {
         email,
@@ -22,4 +22,6 @@ export const registerUser = async (email, password, username) => {
       }
     }
   )
+  if (response.status === 200) process.env.TOKEN = response.body.user.token
+  return response
 }
