@@ -1,0 +1,35 @@
+{
+  "name": "api_testing",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Simple TAF for API testing of RealWorld example app (https://github.com/avanelli/fastify-realworld-example-app)",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zentestuken/atm_advanced.git"
+  },
+  "keywords": [
+    "api",
+    "testing",
+    "axios",
+    "mocha"
+  ],
+  "author": "Yauhen Viazau",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zentestuken/atm_advanced/issues"
+  },
+  "homepage": "https://github.com/zentestuken/atm_advanced#readme",
+  "devDependencies": {
+    "axios": "^1.11.0",
+    "chai": "^6.0.1",
+    "mocha": "^11.7.1",
+    "mocha-multi-reporters": "^1.5.1",
+    "mochawesome": "^7.1.3",
+    "mochawesome-merge": "^4.4.1",
+    "mochawesome-report-generator": "^6.2.0"
+  }
+}
