@@ -1,15 +1,16 @@
 const UserDataHandler = require('../src/data_handlers/user_data_handler.js')
 const nock = require('nock')
-const { baseUrl, mockUserData, testUserData } = require('./testData.js')
+const userData = require('../data/users.json')
 
+const testUserData = userData[1]
 let userDataHandler
 
 beforeEach(() => {
   userDataHandler = new UserDataHandler()
   if (process.env.MOCK) {
-    nock(baseUrl)
+    nock(global.SERVER_URL)
       .get('/users')
-      .reply(200, mockUserData)
+      .reply(200, userData)
   }
 })
 
@@ -26,7 +27,7 @@ describe('General tests', () => {
 
   test('loadUsers should throw error when network request fails', async () => {
     nock.cleanAll()
-    nock(baseUrl)
+    nock(global.SERVER_URL)
       .get('/users')
       .replyWithError('Connection refused')
     await expect(userDataHandler.loadUsers())

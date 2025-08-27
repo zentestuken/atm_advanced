@@ -12,7 +12,22 @@ const config = {
   collectCoverage: true,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
-  collectCoverageFrom: ['src/data_handlers/user_data_handler.js']
+  collectCoverageFrom: ['src/data_handlers/user_data_handler.js'],
+
+  // A set of global variables that need to be available in all test environments
+  globals: {
+    SERVER_URL: 'http://localhost:3000'
+  },
+
+  // An object that configures minimum threshold enforcement for coverage results
+  coverageThreshold: {
+    'src/data_handlers/user_data_handler.js': {
+      statements: 100,
+      branches: 100,
+      functions: 100,
+      lines: 100
+    }
+  }
 
   // All imported modules in your tests should be mocked automatically
   // automock: false,
@@ -48,9 +63,6 @@ const config = {
   //   // "clover"
   // ]
 
-  // An object that configures minimum threshold enforcement for coverage results
-  // coverageThreshold: undefined,
-
   // A path to a custom dependency extractor
   // dependencyExtractor: undefined,
 
@@ -70,9 +82,6 @@ const config = {
 
   // A path to a module which exports an async function that is triggered once after all test suites
   // globalTeardown: undefined,
-
-  // A set of global variables that need to be available in all test environments
-  // globals: {},
 
   // The maximum amount of workers used to run your tests. Can be specified as % or a number. E.g. maxWorkers: 10% will use 10% of your CPU amount + 1 as the maximum worker number. maxWorkers: 2 will use a maximum of 2 workers.
   // maxWorkers: "50%",
