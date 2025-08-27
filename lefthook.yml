@@ -2,41 +2,20 @@ pre-commit:
   parallel: true
   commands:
     playwright_taf_lint:
-      run: |
-        if [ -d "playwright_taf" ]; then
-          echo "Running lint in playwright_taf..."
-          npm run lint-fix || exit 1
-        fi
-      cwd: playwright_taf
+      root: "playwright_taf/"
+      run: npm run lint-fix
     playwright_taf_runners_lint:
-      run: |
-        if [ -d "playwright_taf_runners" ]; then
-          echo "Running lint in playwright_taf_runners..."
-          npm run lint-fix || exit 1
-        fi
-      cwd: playwright_taf_runners
+      root: "playwright_taf_runners/"
+      run: npm run lint-fix
     playwright_taf_bdd_lint:
-      run: |
-        if [ -d "playwright_taf_bdd" ]; then
-          echo "Running lint in playwright_taf_bdd..."
-          npm run lint-fix || exit 1
-        fi
-      cwd: playwright_taf_bdd
+      root: "playwright_taf_bdd/"
+      run: npm run lint-fix
     unit_testing_lint:
-      run: |
-        if [ -d "unit_testing" ]; then
-          echo "Running lint in unit_testing..."
-          npm run lint-fix || exit 1
-        fi
-      cwd: unit_testing
+      root: "unit_testing/"
+      run: npm run lint-fix
 pre-push:
-  parallel: false
   commands:
     unit_tests:
+      glob: "unit_testing/**/*"
       root: "unit_testing/"
-      run: |
-        CHANGED_FILES=$(git diff --name-only HEAD @{push} -- .)
-        if [ -n "$CHANGED_FILES" ]; then
-          echo "Changes detected in unit_testing. Running unit tests..."
-          npm test
-        fi
+      run: npm test
