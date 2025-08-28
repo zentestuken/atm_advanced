@@ -14,49 +14,68 @@ const switchClients = () => {
 const APIRequest = switchClients()
 
 export const registerUser = async (email, password, username) => {
-  const response = await APIRequest('/users', 'POST',
-    {
-      user: {
-        email,
-        password,
-        username
+  const response = await APIRequest({
+    path: '/users',
+    method: 'POST',
+    body:
+      {
+        user: {
+          email,
+          password,
+          username
+        }
       }
-    }
-  )
+  })
   if (response.status === 200) process.env.TOKEN = response.body.user.token
   return response
 }
 
 export const getCurrentUser = () => {
-  return APIRequest('/user', 'GET')
+  return APIRequest({ path: '/user' })
+}
+
+export const updateCurrentUser = async (paramsToUpdate) => {
+  const response = await APIRequest({
+    path: '/user',
+    method: 'PUT',
+    body: { user: paramsToUpdate }
+  })
+  if (response.status === 200) process.env.TOKEN = response.body.user.token
+  return response
 }
 
 export const login = (email, password) => {
-  return APIRequest('/users/login', 'POST',
-    {
-      user: {
-        email,
-        password,
+  return APIRequest({
+    path: '/users/login',
+    method: 'POST',
+    body:
+      {
+        user: {
+          email,
+          password,
+        }
       }
-    }
-  )
+  })
 }
 
-export const getAllArticles = () => {
-  return APIRequest('/articles', 'GET')
+export const getArticles = (params) => {
+  return APIRequest({ path: '/articles', params })
 }
 
 export const createArticle = (title, description, body, tagList) => {
-  return APIRequest('/articles', 'POST',
-    {
-      article: {
-        title,
-        description,
-        body,
-        tagList
+  return APIRequest({
+    path: '/articles',
+    method: 'POST',
+    body:
+      {
+        article: {
+          title,
+          description,
+          body,
+          tagList
+        }
       }
-    }
-  )
+  })
 }
 
 export const registerAndLoginAsTestUser = async () => {

@@ -1,6 +1,6 @@
 export const articleData = {
-  title: 'How to train your dragon', 
+  title: 'Hoow to write tests', 
   description: 'Ever wonder how?', 
   body: 'Very carefully.', 
-  tagList: ['training', 'dragons']
+  tagList: ['tests', 'writing']
 }

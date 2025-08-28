@@ -12,6 +12,8 @@ export function generateRegisterUserData() {
   return {
     email: `user_${randomLetters}@mymail.com`,
     password: 'Yauhen12345',
-    username: `user_${randomLetters}`
+    username: `user_${randomLetters}`,
+    bio: '',
+    image: '',
   };
 }
