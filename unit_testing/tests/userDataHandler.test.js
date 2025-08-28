@@ -115,49 +115,51 @@ describe('isMatchingAllSearchParams tests', () => {
 })
 
 describe('findUsers tests', () => {
-  test('should find user by one parameter', async () => {
-    await userDataHandler.loadUsers()
-    const existingUserData = userDataHandler.users[0]
-    const searchParams = {
-      username: existingUserData.username
-    }
-    const matchingUsers = userDataHandler.findUsers(searchParams)
-    expect(matchingUsers).toHaveLength(1)
-    expect(matchingUsers[0]).toEqual(existingUserData)
-  })
+  describe('when users are loaded', () => {
+    beforeEach(async () => {
+      await userDataHandler.loadUsers()
+    })
 
-  test('should find user by multiple parameters', async () => {
-    await userDataHandler.loadUsers()
-    const existingUserData = userDataHandler.users[1]
-    const searchParams = {
-      name: existingUserData.name,
-      email: existingUserData.email,
-      website: existingUserData.website
-    }
-    const matchingUsers = userDataHandler.findUsers(searchParams)
-    expect(matchingUsers).toHaveLength(1)
-    expect(matchingUsers[0]).toEqual(existingUserData)
+    test('should find user by one parameter', async () => {
+      const existingUserData = userDataHandler.users[0]
+      const searchParams = {
+        username: existingUserData.username
+      }
+      const matchingUsers = userDataHandler.findUsers(searchParams)
+      expect(matchingUsers).toHaveLength(1)
+      expect(matchingUsers[0]).toEqual(existingUserData)
+    })
+
+    test('should find user by multiple parameters', async () => {
+      const existingUserData = userDataHandler.users[1]
+      const searchParams = {
+        name: existingUserData.name,
+        email: existingUserData.email,
+        website: existingUserData.website
+      }
+      const matchingUsers = userDataHandler.findUsers(searchParams)
+      expect(matchingUsers).toHaveLength(1)
+      expect(matchingUsers[0]).toEqual(existingUserData)
+    })
+
+    test('should throw error with no searchParameters argument', async () => {
+      expect(() => userDataHandler.findUsers())
+        .toThrow('No search parameters provoded!')
+    })
+
+    test('should throw error when no matching users', async () => {
+      const searchParams = {
+        name: 'Nonexistent Name',
+        email: 'nothing@void.by'
+      }
+      expect(() => userDataHandler.findUsers(searchParams))
+        .toThrow('No matching users found!')
+    })
   })
 
   test('should throw error when no users', async () => {
     const searchParams = { name: 'Yauhen' }
     expect(() => userDataHandler.findUsers(searchParams))
       .toThrow('No users loaded!')
-  })
-
-  test('should throw error with no searchParameters argument', async () => {
-    await userDataHandler.loadUsers()
-    expect(() => userDataHandler.findUsers())
-      .toThrow('No search parameters provoded!')
-  })
-
-  test('should throw error when no matching users', async () => {
-    await userDataHandler.loadUsers()
-    const searchParams = {
-      name: 'Nonexistent Name',
-      email: 'nothing@void.by'
-    }
-    expect(() => userDataHandler.findUsers(searchParams))
-      .toThrow('No matching users found!')
   })
 })
