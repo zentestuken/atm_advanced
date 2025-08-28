@@ -4,14 +4,32 @@ const userData = require('../data/users.json')
 
 const testUserData = userData[1]
 let userDataHandler
+let loadedUsers
 
-beforeEach(() => {
-  userDataHandler = new UserDataHandler()
+function setupMock () {
   if (process.env.MOCK) {
     nock(global.SERVER_URL)
       .get('/users')
       .reply(200, userData)
   }
+}
+// Helper function to load users once and reuse the data
+function setupLoadedUsers () {
+  beforeAll(async () => {
+    const tempHandler = new UserDataHandler()
+    setupMock()
+    await tempHandler.loadUsers()
+    loadedUsers = tempHandler.users
+    nock.cleanAll()
+  })
+  beforeEach(() => {
+    userDataHandler.users = [...loadedUsers]
+  })
+}
+
+beforeEach(() => {
+  userDataHandler = new UserDataHandler()
+  setupMock()
 })
 
 afterEach(() => {
@@ -36,9 +54,7 @@ describe('General tests', () => {
   })
 
   describe('when users are loaded', () => {
-    beforeEach(async () => {
-      await userDataHandler.loadUsers()
-    })
+    setupLoadedUsers()
 
     test('getUserEmailsList should return emails list', async () => {
       const expectedArrayOfEmails = userDataHandler.users.map(user => user.email)
@@ -125,9 +141,7 @@ describe('isMatchingAllSearchParams tests', () => {
 
 describe('findUsers tests', () => {
   describe('when users are loaded', () => {
-    beforeEach(async () => {
-      await userDataHandler.loadUsers()
-    })
+    setupLoadedUsers()
 
     test('should find user by one parameter', async () => {
       const existingUserData = userDataHandler.users[0]
