@@ -35,23 +35,32 @@ describe('General tests', () => {
       .toThrow('Failed to load users data: Error: Connection refused')
   })
 
-  test('getUserEmailsList should return emails list', async () => {
-    await userDataHandler.loadUsers()
-    const expectedArrayOfEmails = userDataHandler.users.map(user => user.email)
-    const expectedEmailsList = expectedArrayOfEmails.join(';')
-    const emailsList = userDataHandler.getUserEmailsList()
-    expect(emailsList).toBe(expectedEmailsList)
+  describe('when users are loaded', () => {
+    beforeEach(async () => {
+      await userDataHandler.loadUsers()
+    })
+
+    test('getUserEmailsList should return emails list', async () => {
+      const expectedArrayOfEmails = userDataHandler.users.map(user => user.email)
+      const expectedEmailsList = expectedArrayOfEmails.join(';')
+      const emailsList = userDataHandler.getUserEmailsList()
+      expect(emailsList).toBe(expectedEmailsList)
+    })
+
+    test('getNumberOfUsers should return number of users', async () => {
+      expect(userDataHandler.getNumberOfUsers()).toBe(userDataHandler.users.length)
+    })
   })
 
-  test('getUserEmailsList should throw error when no users', () => {
-    expect(() => userDataHandler.getUserEmailsList())
-      .toThrow('No users loaded!')
-  })
+  describe('when users are not loaded', () => {
+    test('getUserEmailsList should throw error when no users', () => {
+      expect(() => userDataHandler.getUserEmailsList())
+        .toThrow('No users loaded!')
+    })
 
-  test('getNumberOfUsers should return number of users', async () => {
-    expect(userDataHandler.getNumberOfUsers()).toBe(0)
-    await userDataHandler.loadUsers()
-    expect(userDataHandler.getNumberOfUsers()).toBe(userDataHandler.users.length)
+    test('getNumberOfUsers should return 0 number of users', async () => {
+      expect(userDataHandler.getNumberOfUsers()).toBe(0)
+    })
   })
 })
 
@@ -157,9 +166,11 @@ describe('findUsers tests', () => {
     })
   })
 
-  test('should throw error when no users', async () => {
-    const searchParams = { name: 'Yauhen' }
-    expect(() => userDataHandler.findUsers(searchParams))
-      .toThrow('No users loaded!')
+  describe('when users are not loaded', () => {
+    test('should throw error when no users', async () => {
+      const searchParams = { name: 'Yauhen' }
+      expect(() => userDataHandler.findUsers(searchParams))
+        .toThrow('No users loaded!')
+    })
   })
 })
