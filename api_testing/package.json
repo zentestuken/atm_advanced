@@ -10,7 +10,8 @@
     "pretest": "npm run lint-fix",
     "test": "vitest --run",
     "test-got-run": "cross-env APICLIENT=got npm test",
-    "test-got": "run-s pretest test-got-run"
+    "test-got": "run-s pretest test-got-run",
+    "get-report": "npx vite preview --outDir html"
   },
   "repository": {
     "type": "git",
