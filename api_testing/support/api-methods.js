@@ -1,20 +1,8 @@
-import { APIRequestAxios } from './api.js'
-import { generateRegisterUserData } from './helpers.js' 
-
-const switchClients = () => {
-  if (typeof process.env.APICLIENT === 'undefined') return APIRequestAxios
-  switch (process.env.APICLIENT.toLowerCase()) {
-    case 'axios':
-      return APIRequestAxios
-    default:
-      APIRequestAxios
-  }
-}
-
-const APIRequest = switchClients()
+import apiRequest from './request.js'
+import { generateRegisterUserData } from './helpers.js'
 
 export const registerUser = async (email, password, username) => {
-  const response = await APIRequest({
+  const response = await apiRequest({
     path: '/users',
     method: 'POST',
     body:
@@ -31,11 +19,11 @@ export const registerUser = async (email, password, username) => {
 }
 
 export const getCurrentUser = () => {
-  return APIRequest({ path: '/user' })
+  return apiRequest({ path: '/user' })
 }
 
 export const updateCurrentUser = async (paramsToUpdate) => {
-  const response = await APIRequest({
+  const response = await apiRequest({
     path: '/user',
     method: 'PUT',
     body: { user: paramsToUpdate }
@@ -45,7 +33,7 @@ export const updateCurrentUser = async (paramsToUpdate) => {
 }
 
 export const login = (email, password) => {
-  return APIRequest({
+  return apiRequest({
     path: '/users/login',
     method: 'POST',
     body:
@@ -59,11 +47,15 @@ export const login = (email, password) => {
 }
 
 export const getArticles = (params) => {
-  return APIRequest({ path: '/articles', params })
+  return apiRequest({ path: '/articles', params })
+}
+
+export const getArticleBySlug = (slug) => {
+  return apiRequest({ path: `/articles/${slug}` })
 }
 
 export const createArticle = (title, description, body, tagList) => {
-  return APIRequest({
+  return apiRequest({
     path: '/articles',
     method: 'POST',
     body:
@@ -76,6 +68,10 @@ export const createArticle = (title, description, body, tagList) => {
         }
       }
   })
+}
+
+export const deleteArticle = (slug) => {
+  return apiRequest({ path: `/articles/${slug}`, method: 'DELETE' })
 }
 
 export const registerAndLoginAsTestUser = async () => {

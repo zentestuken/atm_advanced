@@ -1,1 +1,4 @@
-export const apiBaseUrl = 'http://localhost:5000/api'
+export default {
+  apiBaseUrl: 'http://localhost:5000/api',
+  requestTimeout: 10_000,
+}

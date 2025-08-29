@@ -29,7 +29,8 @@ class ArticleResponseDTO {
 
 class ArticlesResponseDTO {
   constructor(responseBody) {
-    this.articles = responseBody.articles.length ? responseBody.articles.map(article => new ArticleResponseDTO({ article })) : []
+    this.articles = responseBody.articles.length ?
+      responseBody.articles.map(article => new ArticleResponseDTO({ article })) : []
   }
 }
 
@@ -37,7 +38,7 @@ class ErrorResponseDTO {
   constructor(responseBody) {
     this.message = responseBody.message
   }
-} 
+}
 
 export {
   UserResponseDTO,
