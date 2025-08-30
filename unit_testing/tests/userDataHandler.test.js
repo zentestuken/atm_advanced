@@ -46,15 +46,14 @@ describe('when users were not loaded', () => {
 })
 
 describe('when users loading failed', () => {
-  beforeAll(async () => {
-    nock.cleanAll()
+  beforeEach(async () => {
     nock(global.SERVER_URL)
       .get('/users')
       .replyWithError('Connection refused')
     userDataHandler = new UserDataHandler()
   })
 
-  afterAll(() => {
+  afterEach(() => {
     nock.cleanAll()
   })
 
