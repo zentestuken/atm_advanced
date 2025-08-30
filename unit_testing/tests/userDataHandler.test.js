@@ -13,15 +13,16 @@ function setupMock () {
   }
 }
 
-describe('when users were not loaded', () => {
-  beforeEach(async () => {
-    setupMock()
-    userDataHandler = new UserDataHandler()
-  })
+beforeEach(async () => {
+  setupMock()
+  userDataHandler = new UserDataHandler()
+})
 
-  afterEach(() => {
-    nock.cleanAll()
-  })
+afterEach(() => {
+  nock.cleanAll()
+})
+
+describe('when users were not loaded', () => {
 
   test('loadUsers should load users', async () => {
     await userDataHandler.loadUsers()
