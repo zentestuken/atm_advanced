@@ -71,8 +71,6 @@ describe('when users loading failed', () => {
 
 describe('when users were loaded', () => {
   beforeAll(async () => {
-    setupMock()
-    userDataHandler = new UserDataHandler()
     await userDataHandler.loadUsers()
   })
 
