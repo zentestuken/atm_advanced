@@ -23,13 +23,6 @@ afterEach(() => {
 })
 
 describe('when users were not loaded', () => {
-
-  test('loadUsers should load users', async () => {
-    await userDataHandler.loadUsers()
-    expect(userDataHandler.users.length).toBeGreaterThan(0)
-    expect(userDataHandler.users[0]).toHaveProperty('name')
-  })
-
   test('getUserEmailsList should throw error when no users', () => {
     expect(() => userDataHandler.getUserEmailsList())
       .toThrow('No users loaded!')
@@ -48,6 +41,7 @@ describe('when users were not loaded', () => {
 
 describe('when users loading failed', () => {
   beforeEach(async () => {
+    nock.cleanAll()
     nock(global.SERVER_URL)
       .get('/users')
       .replyWithError('Connection refused')
@@ -59,10 +53,6 @@ describe('when users loading failed', () => {
   })
 
   test('loadUsers should throw error when network request fails', async () => {
-    nock.cleanAll()
-    nock(global.SERVER_URL)
-      .get('/users')
-      .replyWithError('Connection refused')
     await expect(userDataHandler.loadUsers())
       .rejects
       .toThrow('Failed to load users data: Error: Connection refused')
@@ -70,8 +60,13 @@ describe('when users loading failed', () => {
 })
 
 describe('when users were loaded', () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     await userDataHandler.loadUsers()
+  })
+
+  test('there should be users in the system', async () => {
+    expect(userDataHandler.users.length).toBeGreaterThan(0)
+    expect(userDataHandler.users[0]).toHaveProperty('name')
   })
 
   test('getUserEmailsList should return emails list', async () => {
