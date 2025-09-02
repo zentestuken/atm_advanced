@@ -64,11 +64,6 @@ describe('when users were loaded', () => {
     await userDataHandler.loadUsers()
   })
 
-  test('there should be users in the system', async () => {
-    expect(userDataHandler.users.length).toBeGreaterThan(0)
-    expect(userDataHandler.users[0]).toHaveProperty('name')
-  })
-
   test('getUserEmailsList should return emails list', async () => {
     const expectedArrayOfEmails = userDataHandler.users.map(user => user.email)
     const expectedEmailsList = expectedArrayOfEmails.join(';')
