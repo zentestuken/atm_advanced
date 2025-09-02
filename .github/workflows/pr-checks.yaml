@@ -18,6 +18,7 @@ jobs:
           - playwright_taf
           - playwright_taf_runners
           - playwright_taf_bdd
+          - unit_testing
 
     steps:
       - uses: actions/checkout@v4
