@@ -32,7 +32,7 @@ describe('when users were not loaded', () => {
     expect(userDataHandler.getNumberOfUsers()).toBe(0)
   })
 
-  test('should throw error when no users', async () => {
+  test('findUsers should throw error when no users', async () => {
     const searchParams = { name: 'Yauhen' }
     expect(() => userDataHandler.findUsers(searchParams))
       .toThrow('No users loaded!')
