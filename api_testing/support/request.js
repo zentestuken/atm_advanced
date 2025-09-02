@@ -2,6 +2,7 @@ import config from '../config.js'
 import axios from 'axios'
 import got from 'got'
 
+// eslint-disable-next-line no-unused-vars
 function logData(client, path, params, method, body, response) {
   console.log(`API request (${client}):
   path: ${path}
@@ -34,7 +35,7 @@ const apiRequestAxios = async ({ path, method = 'GET', body = {}, params }) => {
     body: responseData.data,
   }
   // Data for debugging purposes
-  logData('Axios', path, params, method, body, response)
+  // logData('Axios', path, params, method, body, response)
   return response
 }
 
@@ -62,7 +63,7 @@ const apiRequestGot = async ({ path, method = 'GET', body = {}, params }) => {
     body: responseData.body ? JSON.parse(responseData.body) : undefined
   }
   // Data for debugging purposes
-  logData('GOT', path, params, method, body, response)
+  // logData('GOT', path, params, method, body, response)
   return response
 }
 
