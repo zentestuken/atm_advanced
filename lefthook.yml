@@ -17,6 +17,10 @@ pre-commit:
       root: "unit_testing/"
       run: npm run lint-fix
       stage_fixed: true
+    api_testing_lint:
+      root: "api_testing/"
+      run: npm run lint-fix
+      stage_fixed: true
 pre-push:
   commands:
     unit_tests:

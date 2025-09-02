@@ -8,6 +8,7 @@ export default defineConfig([
     ignores: [
       'node_modules/**',
       'html/**',
+      'app/**'
     ]
   },
   {
@@ -33,7 +34,7 @@ export default defineConfig([
   },
   {
     files: ['**/*.json'],
-    ignores: ['package.json', 'package-lock.json'],
+    ignores: ['package.json', 'package-lock.json', 'app/**'],
     plugins: { json },
     language: 'json/json',
     extends: ['json/recommended']
