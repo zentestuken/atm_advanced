@@ -1,0 +1,25 @@
+pre-commit:
+  parallel: true
+  commands:
+    playwright_taf_lint:
+      root: "playwright_taf/"
+      run: npm run lint-fix
+      stage_fixed: true
+    playwright_taf_runners_lint:
+      root: "playwright_taf_runners/"
+      run: npm run lint-fix
+      stage_fixed: true
+    playwright_taf_bdd_lint:
+      root: "playwright_taf_bdd/"
+      run: npm run lint-fix
+      stage_fixed: true
+    unit_testing_lint:
+      root: "unit_testing/"
+      run: npm run lint-fix
+      stage_fixed: true
+pre-push:
+  commands:
+    unit_tests:
+      glob: "unit_testing/**/*"
+      root: "unit_testing/"
+      run: npm test
