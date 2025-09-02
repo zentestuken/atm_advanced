@@ -22,7 +22,8 @@ const apiRequestAxios = async ({ path, method = 'GET', body = {}, params }) => {
       'Content-Type': 'application/json',
       'X-Requested-With': 'XMLHttpRequest'
     },
-    data: body
+    data: body,
+    timeout: config.requestTimeout,
   }).catch(error => {
     if (error.response) {
       return error.response
