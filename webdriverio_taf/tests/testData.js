@@ -1,5 +1,5 @@
 export default {
-  defaultProductsCount: 15,
+  defaultProductsCount: 16,
   shopPageTitle: 'Typescript React Shopping cart',
   products: [
     {
@@ -10,5 +10,13 @@ export default {
       name: 'Black Batman T-shirt',
       price: '10.90',
     },
+    {
+      name: 'Blue T-Shirt',
+      price: '9.00',
+    },
+    {
+      name: 'Marine Blue T-shirt',
+      price: '49.00',
+    },
   ],
-};
+}

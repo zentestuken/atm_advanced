@@ -1,4 +1,4 @@
-import HtmlReporter from '@rpii/wdio-html-reporter';
+import allureReporter from '@wdio/allure-reporter';
 
 export const config = {
     //
@@ -129,7 +129,9 @@ export const config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ['spec',['allure', {outputDir: 'artifacts/allure-results'}]],
+    reporters: ['spec',
+      ['allure', {outputDir: 'artifacts/allure-results'}]
+    ],
 
     // Options to be passed to Mocha.
     // See the full list at http://mochajs.org/
@@ -197,8 +199,14 @@ export const config = {
      * @param {string} commandName hook command name
      * @param {Array} args arguments that command would receive
      */
-    // beforeCommand: function (commandName, args) {
-    // },
+    beforeCommand: function (commandName, args) {
+        // Log navigation commands
+        if (commandName === 'url') {
+            allureReporter.addStep(`Navigate to: ${args[0]}`);
+        } else if (!['EXECUTE', 'SCRIPTCALLFUNCTION', 'BROWSINGCONTEXTLOCATENODES', 'EXECUTEASYNC'].includes(commandName.toUpperCase())) {
+          allureReporter.addStep(`${commandName.toUpperCase()}: ${JSON.stringify(args)}`);
+        }
+    },
     /**
      * Hook that gets executed before the suite starts
      * @param {object} suite suite details
@@ -220,8 +228,11 @@ export const config = {
      * Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
      * afterEach in Mocha)
      */
-    // afterHook: function (test, context, { error, result, duration, passed, retries }, hookName) {
-    // },
+    afterHook: function (test, context, { error, result, duration, passed, retries }, hookName) {
+        if (error) {
+            allureReporter.addStep(`Hook ${hookName} failed: ${error.message}`);
+        }
+    },
     /**
      * Function to be executed after a test (in Mocha/Jasmine only)
      * @param {object}  test             test object
@@ -235,7 +246,7 @@ export const config = {
     afterTest: async function(test, context, { error, result, duration, passed, retries }) {
       if (!passed) {
         const screenshot = await browser.takeScreenshot();
-        await allureReporter.addAttachment(
+        allureReporter.addAttachment(
           'Screenshot on Failure',
           Buffer.from(screenshot, 'base64'),
           'image/png'
@@ -297,8 +308,9 @@ export const config = {
     * Hook that gets executed before a WebdriverIO assertion happens.
     * @param {object} params information about the assertion to be executed
     */
-    // beforeAssertion: function(params) {
-    // }
+    beforeAssertion: function(params) {
+      allureReporter.addStep(`ASSERT: ${JSON.stringify(params, null, 2)}`);
+    },
     /**
     * Hook that gets executed after a WebdriverIO assertion happened.
     * @param {object} params information about the assertion that was executed, including its results
