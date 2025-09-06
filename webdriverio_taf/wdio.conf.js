@@ -52,11 +52,11 @@ export const config = {
     // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [{
-        browserName: 'chrome'
+        browserName: 'chrome',
     // }, {
-    //     browserName: 'firefox'
-    // }, {
-    //     browserName: 'MicrosoftEdge'
+      // browserName: 'firefox',
+    }, {
+        browserName: 'MicrosoftEdge'
     }],
 
     //
@@ -203,7 +203,13 @@ export const config = {
         // Log navigation commands
         if (commandName === 'url') {
             allureReporter.addStep(`Navigate to: ${args[0]}`);
-        } else if (!['EXECUTE', 'SCRIPTCALLFUNCTION', 'BROWSINGCONTEXTLOCATENODES', 'EXECUTEASYNC'].includes(commandName.toUpperCase())) {
+        } else if (![
+          'EXECUTE',
+          'SCRIPTCALLFUNCTION',
+          'BROWSINGCONTEXTLOCATENODES',
+          'EXECUTEASYNC',
+          'EMIT'
+        ].includes(commandName.toUpperCase())) {
           allureReporter.addStep(`${commandName.toUpperCase()}: ${JSON.stringify(args)}`);
         }
     },

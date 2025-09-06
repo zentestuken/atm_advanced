@@ -14,8 +14,8 @@ class Cart {
     return this.rootEl().$('div[class^="CartProducts__CartProductsEmpty"]')
   }
 
-  get checkoutButton () {
-    return within(this.rootEl()).getByRole('button', { name: 'Checkout' })
+  async getCheckoutButton () {
+    return within(await this.rootEl()).getByRole('button', { name: 'Checkout' })
   }
 
   get subTotalLabel () {

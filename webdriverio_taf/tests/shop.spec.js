@@ -1,5 +1,11 @@
 import ShopPage from '../po/pages/shop.page.js'
-import { getPriceLabelForPrices } from '../utils/helpers.js'
+import {
+  getPriceLabelForPrices,
+  waitForAlert,
+  getExpectedAlertText,
+  scrollToElement,
+  checkElementInViewport,
+} from '../utils/helpers.js'
 import testData from './testData'
 
 let shopPage
@@ -116,5 +122,53 @@ describe('Shopping cart tests', () => {
       .toHaveText(getPriceLabelForPrices(testData.products[1].price))
     expect(shopPage.cart.subTotalLabel)
       .toHaveText(getPriceLabelForPrices(new Array(2).fill(testData.products[1].price)))
+  })
+
+  it('Correct checkout alert shown with one product', async () => {
+    const productRow = shopPage.getProductRowInCart(testData.products[2].name)
+
+    await shopPage.addProductToCart(testData.products[2].name)
+    await expect(await shopPage.cart.contentBlock).toBeDisplayed()
+    expect(await productRow.rootEl).toBeDisplayed()
+
+    await (await shopPage.cart.getCheckoutButton()).click()
+
+    await waitForAlert(browser)
+    expect(await browser.getAlertText())
+      .toMatch(getExpectedAlertText(testData.products[2].price))
+  })
+
+  it('Correct checkout alert shown with multiple products', async () => {
+    const productRow1 = shopPage.getProductRowInCart(testData.products[1].name)
+    const productRow2 = shopPage.getProductRowInCart(testData.products[3].name)
+    const productRow3 = shopPage.getProductRowInCart(testData.products[4].name)
+
+    await shopPage.addProductToCart(testData.products[1].name)
+    await (await shopPage.cart.getCloseButton()).click()
+    await shopPage.addProductToCart(testData.products[3].name)
+    await (await shopPage.cart.getCloseButton()).click()
+    await shopPage.addProductToCart(testData.products[4].name)
+    await expect(await shopPage.cart.contentBlock).toBeDisplayed()
+    expect(await productRow1.rootEl).toBeDisplayed()
+    expect(await productRow2.rootEl).toBeDisplayed()
+    expect(await productRow3.rootEl).toBeDisplayed()
+
+    await (await shopPage.cart.getCheckoutButton()).click()
+    await waitForAlert(browser)
+    expect(await browser.getAlertText())
+      .toMatch(getExpectedAlertText([
+        testData.products[1].price,
+        testData.products[3].price,
+        testData.products[4].price
+      ]))
+  })
+
+  it('Scroll product card into view', async () => {
+    const productCard = shopPage.getProductCard(testData.products[3].name)
+    expect(await productCard.rootEl).toBeDisplayed()
+    expect(await checkElementInViewport(browser, productCard.rootEl)).toBe(false)
+
+    await scrollToElement(browser, productCard.rootEl)
+    expect(await checkElementInViewport(browser, productCard.rootEl)).toBe(true)
   })
 })

@@ -18,5 +18,9 @@ export default {
       name: 'Marine Blue T-shirt',
       price: '49.00',
     },
+    {
+      name: 'Cropped Stay Groovy off white',
+      price: '10.90',
+    },
   ],
 }
