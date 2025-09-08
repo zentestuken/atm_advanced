@@ -1,6 +1,9 @@
-import config from '../config.js'
+import 'dotenv/config'
 import axios from 'axios'
 import got from 'got'
+
+const apiBaseUrl = `http://${process.env.API_HOST}:${process.env.API_PORT}${process.env.API_PREFIX}`
+const requestTimeout = 10_000
 
 // eslint-disable-next-line no-unused-vars
 function logData(client, path, params, method, body, response) {
@@ -17,14 +20,14 @@ const apiRequestAxios = async ({ path, method = 'GET', body = {}, params }) => {
   const responseData = await axios({
     method,
     params,
-    url: `${config.apiBaseUrl}${path}`,
+    url: `${apiBaseUrl}${path}`,
     headers: {
       Authorization: process.env.TOKEN ? `Token ${process.env.TOKEN}` : '',
       'Content-Type': 'application/json',
       'X-Requested-With': 'XMLHttpRequest'
     },
     data: body,
-    timeout: config.requestTimeout,
+    timeout: requestTimeout,
   }).catch(error => {
     if (error.response) {
       return error.response
@@ -43,12 +46,12 @@ const apiRequestGot = async ({ path, method = 'GET', body = {}, params }) => {
   const requestOptions = {
     method,
     searchParams: params,
-    url: `${config.apiBaseUrl}${path}`,
+    url: `${apiBaseUrl}${path}`,
     headers: {
       Authorization: process.env.TOKEN ? `Token ${process.env.TOKEN}` : '',
       'X-Requested-With': 'XMLHttpRequest'
     },
-    timeout: { request: config.requestTimeout }
+    timeout: { request: requestTimeout }
   }
   if (method !== 'GET' && Object.keys(body).length > 0) {
     requestOptions.json = body
