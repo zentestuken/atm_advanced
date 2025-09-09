@@ -19,13 +19,13 @@ import {
   ArticleResponseDTO,
   ArticlesResponseDTO,
   ErrorResponseDTO,
-} from '../support/dto/response-dtos.js'
+} from '../support/dto/response-dto.js'
 
 describe('Tests without pre-registration', () => {
   it('register a new user', async function () {
     const testUserData = generateRegisterUserData()
     const response = await registerUser(...Object.values(testUserData))
-    expect(response.status).to.equal(200)
+    expect(response.statusCode).to.equal(200)
 
     const user = new UserResponseDTO(response.body)
     expect(user.email).to.equal(testUserData.email)
@@ -37,7 +37,7 @@ describe('Tests without pre-registration', () => {
     const testUserData = generateRegisterUserData()
     await registerUser(...Object.values(testUserData))
     const responseDuplicate = await registerUser(...Object.values(testUserData))
-    expect(responseDuplicate.status).to.equal(409)
+    expect(responseDuplicate.statusCode).to.equal(409)
 
     const error = new ErrorResponseDTO(responseDuplicate.body)
     expect(error.message).to.equal('duplicate user')
@@ -47,7 +47,7 @@ describe('Tests without pre-registration', () => {
     const testUserData = generateRegisterUserData()
     await registerUser(...Object.values(testUserData))
     const response = await login(testUserData.email, testUserData.password)
-    expect(response.status).to.equal(200)
+    expect(response.statusCode).to.equal(200)
 
     const user = new UserResponseDTO(response.body)
     expect(user.email).to.equal(testUserData.email)
@@ -56,7 +56,7 @@ describe('Tests without pre-registration', () => {
 
   it('cannot login with invalid credentials', async function () {
     const response = await login('wrongemail@wrongemail.com', 'wrongpassword')
-    expect(response.status).to.equal(401)
+    expect(response.statusCode).to.equal(401)
 
     const error = new ErrorResponseDTO(response.body)
     expect(error.message).to.equal('An error has occurred')
@@ -64,7 +64,7 @@ describe('Tests without pre-registration', () => {
 
   it('get all articles', async function () {
     const response = await getArticles()
-    expect(response.status).to.equal(200)
+    expect(response.statusCode).to.equal(200)
 
     const articlesData = new ArticlesResponseDTO(response.body)
     expect(articlesData.articles).to.have.length.greaterThan(0)
@@ -117,7 +117,7 @@ describe('Tests with pre-registerd user', () => {
 
   it('get current user data', async function () {
     const response = await getCurrentUser()
-    expect(response.status).to.equal(200)
+    expect(response.statusCode).to.equal(200)
 
     const user = new UserResponseDTO(response.body)
     expect(user.email).to.equal(testUserData.email)
@@ -134,7 +134,7 @@ describe('Tests with pre-registerd user', () => {
       image: `https://example.com/updated-image-${randomLetters}.jpg`
     }
     const response = await updateCurrentUser(updateData)
-    expect(response.status).to.equal(200)
+    expect(response.statusCode).to.equal(200)
 
     const user = new UserResponseDTO(response.body)
     expect(user.email).to.equal(updateData.email)
@@ -150,7 +150,7 @@ describe('Tests with pre-registerd user', () => {
       token: randomLetters,
     }
     const response = await updateCurrentUser(updateData)
-    expect(response.status).to.equal(500)
+    expect(response.statusCode).to.equal(500)
 
     const error = new ErrorResponseDTO(response.body)
     expect(error.message).to.equal('An error has occurred')
@@ -158,7 +158,7 @@ describe('Tests with pre-registerd user', () => {
 
   it('cannot update current user with invalid attribute name', async function () {
     const response = await updateCurrentUser({ hokage: true })
-    expect(response.status).to.equal(500)
+    expect(response.statusCode).to.equal(500)
 
     const error = new ErrorResponseDTO(response.body)
     expect(error.message).to.equal('An error has occurred')
@@ -166,7 +166,7 @@ describe('Tests with pre-registerd user', () => {
 
   it('current user not changed when updating with no parameters', async function () {
     const response = await updateCurrentUser({})
-    expect(response.status).to.equal(200)
+    expect(response.statusCode).to.equal(200)
 
     const user = new UserResponseDTO(response.body)
     expect(user.email).to.equal(testUserData.email)
@@ -179,7 +179,7 @@ describe('Tests with pre-registerd user', () => {
   it('create article', async function () {
     const articleData = generateArticleData()
     const response = await createArticle(...Object.values(articleData))
-    expect(response.status).to.equal(201)
+    expect(response.statusCode).to.equal(201)
 
     const article = new ArticleResponseDTO(response.body)
     expect(article.title).to.equal(articleData.title)
@@ -195,10 +195,10 @@ describe('Tests with pre-registerd user', () => {
     const slug = new ArticleResponseDTO(createResponse.body).slug
 
     const deleteResponse = await deleteArticle(slug)
-    expect(deleteResponse.status).to.equal(204)
+    expect(deleteResponse.statusCode).to.equal(204)
 
     const getResponse = await getArticleBySlug(slug)
-    expect(getResponse.status).to.equal(404)
+    expect(getResponse.statusCode).to.equal(404)
     const error = new ErrorResponseDTO(getResponse.body)
     expect(error.message).to.equal('not found')
   })
@@ -207,7 +207,7 @@ describe('Tests with pre-registerd user', () => {
     const slug = 'nonexistent-article-' + getRandomLetters(10)
 
     const deleteResponse = await deleteArticle(slug)
-    expect(deleteResponse.status).to.equal(404)
+    expect(deleteResponse.statusCode).to.equal(404)
     const error = new ErrorResponseDTO(deleteResponse.body)
     expect(error.message).to.equal('not found')
   })
@@ -218,7 +218,7 @@ describe('Tests with pre-registerd user', () => {
     const tag = new ArticleResponseDTO(createResponse.body).tagList[0]
 
     const articlesByTagResponse = await getArticles({ tag })
-    expect(articlesByTagResponse.status).to.equal(200)
+    expect(articlesByTagResponse.statusCode).to.equal(200)
     const articlesByTag = new ArticlesResponseDTO(articlesByTagResponse.body)
     expect(articlesByTag.articles).to.have.lengthOf(1)
   })

@@ -35,42 +35,6 @@ call_lefthook()
     elif test -f "$dir/node_modules/lefthook/bin/index.js"
     then
       "$dir/node_modules/lefthook/bin/index.js" "$@"
-    elif test -f "$dir/unit_testing/node_modules/lefthook-${osArch}-${cpuArch}/bin/lefthook.exe"
-    then
-      "$dir/unit_testing/node_modules/lefthook-${osArch}-${cpuArch}/bin/lefthook.exe" "$@"
-    elif test -f "$dir/unit_testing/node_modules/@evilmartians/lefthook/bin/lefthook-${osArch}-${cpuArch}/lefthook.exe"
-    then
-      "$dir/unit_testing/node_modules/@evilmartians/lefthook/bin/lefthook-${osArch}-${cpuArch}/lefthook.exe" "$@"
-    elif test -f "$dir/unit_testing/node_modules/@evilmartians/lefthook-installer/bin/lefthook.exe"
-    then
-      "$dir/unit_testing/node_modules/@evilmartians/lefthook-installer/bin/lefthook.exe" "$@"
-    elif test -f "$dir/unit_testing/node_modules/lefthook/bin/index.js"
-    then
-      "$dir/unit_testing/node_modules/lefthook/bin/index.js" "$@"
-    elif test -f "$dir/playwright_taf_runners/node_modules/lefthook-${osArch}-${cpuArch}/bin/lefthook.exe"
-    then
-      "$dir/playwright_taf_runners/node_modules/lefthook-${osArch}-${cpuArch}/bin/lefthook.exe" "$@"
-    elif test -f "$dir/playwright_taf_runners/node_modules/@evilmartians/lefthook/bin/lefthook-${osArch}-${cpuArch}/lefthook.exe"
-    then
-      "$dir/playwright_taf_runners/node_modules/@evilmartians/lefthook/bin/lefthook-${osArch}-${cpuArch}/lefthook.exe" "$@"
-    elif test -f "$dir/playwright_taf_runners/node_modules/@evilmartians/lefthook-installer/bin/lefthook.exe"
-    then
-      "$dir/playwright_taf_runners/node_modules/@evilmartians/lefthook-installer/bin/lefthook.exe" "$@"
-    elif test -f "$dir/playwright_taf_runners/node_modules/lefthook/bin/index.js"
-    then
-      "$dir/playwright_taf_runners/node_modules/lefthook/bin/index.js" "$@"
-    elif test -f "$dir/playwright_taf_bdd/node_modules/lefthook-${osArch}-${cpuArch}/bin/lefthook.exe"
-    then
-      "$dir/playwright_taf_bdd/node_modules/lefthook-${osArch}-${cpuArch}/bin/lefthook.exe" "$@"
-    elif test -f "$dir/playwright_taf_bdd/node_modules/@evilmartians/lefthook/bin/lefthook-${osArch}-${cpuArch}/lefthook.exe"
-    then
-      "$dir/playwright_taf_bdd/node_modules/@evilmartians/lefthook/bin/lefthook-${osArch}-${cpuArch}/lefthook.exe" "$@"
-    elif test -f "$dir/playwright_taf_bdd/node_modules/@evilmartians/lefthook-installer/bin/lefthook.exe"
-    then
-      "$dir/playwright_taf_bdd/node_modules/@evilmartians/lefthook-installer/bin/lefthook.exe" "$@"
-    elif test -f "$dir/playwright_taf_bdd/node_modules/lefthook/bin/index.js"
-    then
-      "$dir/playwright_taf_bdd/node_modules/lefthook/bin/index.js" "$@"
     elif test -f "$dir/api_testing/node_modules/lefthook-${osArch}-${cpuArch}/bin/lefthook.exe"
     then
       "$dir/api_testing/node_modules/lefthook-${osArch}-${cpuArch}/bin/lefthook.exe" "$@"
@@ -95,6 +59,42 @@ call_lefthook()
     elif test -f "$dir/playwright_taf/node_modules/lefthook/bin/index.js"
     then
       "$dir/playwright_taf/node_modules/lefthook/bin/index.js" "$@"
+    elif test -f "$dir/playwright_taf_runners/node_modules/lefthook-${osArch}-${cpuArch}/bin/lefthook.exe"
+    then
+      "$dir/playwright_taf_runners/node_modules/lefthook-${osArch}-${cpuArch}/bin/lefthook.exe" "$@"
+    elif test -f "$dir/playwright_taf_runners/node_modules/@evilmartians/lefthook/bin/lefthook-${osArch}-${cpuArch}/lefthook.exe"
+    then
+      "$dir/playwright_taf_runners/node_modules/@evilmartians/lefthook/bin/lefthook-${osArch}-${cpuArch}/lefthook.exe" "$@"
+    elif test -f "$dir/playwright_taf_runners/node_modules/@evilmartians/lefthook-installer/bin/lefthook.exe"
+    then
+      "$dir/playwright_taf_runners/node_modules/@evilmartians/lefthook-installer/bin/lefthook.exe" "$@"
+    elif test -f "$dir/playwright_taf_runners/node_modules/lefthook/bin/index.js"
+    then
+      "$dir/playwright_taf_runners/node_modules/lefthook/bin/index.js" "$@"
+    elif test -f "$dir/playwright_taf_bdd/node_modules/lefthook-${osArch}-${cpuArch}/bin/lefthook.exe"
+    then
+      "$dir/playwright_taf_bdd/node_modules/lefthook-${osArch}-${cpuArch}/bin/lefthook.exe" "$@"
+    elif test -f "$dir/playwright_taf_bdd/node_modules/@evilmartians/lefthook/bin/lefthook-${osArch}-${cpuArch}/lefthook.exe"
+    then
+      "$dir/playwright_taf_bdd/node_modules/@evilmartians/lefthook/bin/lefthook-${osArch}-${cpuArch}/lefthook.exe" "$@"
+    elif test -f "$dir/playwright_taf_bdd/node_modules/@evilmartians/lefthook-installer/bin/lefthook.exe"
+    then
+      "$dir/playwright_taf_bdd/node_modules/@evilmartians/lefthook-installer/bin/lefthook.exe" "$@"
+    elif test -f "$dir/playwright_taf_bdd/node_modules/lefthook/bin/index.js"
+    then
+      "$dir/playwright_taf_bdd/node_modules/lefthook/bin/index.js" "$@"
+    elif test -f "$dir/unit_testing/node_modules/lefthook-${osArch}-${cpuArch}/bin/lefthook.exe"
+    then
+      "$dir/unit_testing/node_modules/lefthook-${osArch}-${cpuArch}/bin/lefthook.exe" "$@"
+    elif test -f "$dir/unit_testing/node_modules/@evilmartians/lefthook/bin/lefthook-${osArch}-${cpuArch}/lefthook.exe"
+    then
+      "$dir/unit_testing/node_modules/@evilmartians/lefthook/bin/lefthook-${osArch}-${cpuArch}/lefthook.exe" "$@"
+    elif test -f "$dir/unit_testing/node_modules/@evilmartians/lefthook-installer/bin/lefthook.exe"
+    then
+      "$dir/unit_testing/node_modules/@evilmartians/lefthook-installer/bin/lefthook.exe" "$@"
+    elif test -f "$dir/unit_testing/node_modules/lefthook/bin/index.js"
+    then
+      "$dir/unit_testing/node_modules/lefthook/bin/index.js" "$@"
     
     elif go tool lefthook -h >/dev/null 2>&1
     then
