@@ -20,6 +20,7 @@ import {
   ArticlesResponseDTO,
   ErrorResponseDTO,
 } from '../support/dto/response-dto.js'
+import defaultUser from '../fixtures/user.json'
 
 describe('Tests without pre-registration', () => {
   it('register a new user', async function () {
@@ -28,9 +29,13 @@ describe('Tests without pre-registration', () => {
     expect(response.statusCode).to.equal(200)
 
     const user = new UserResponseDTO(response.body)
-    expect(user.email).to.equal(testUserData.email)
-    expect(user.username).to.equal(testUserData.username)
-    expect(user.token).to.be.a('string')
+    expect(user).toEqual(
+      expect.objectContaining({
+        email: testUserData.email,
+        username: testUserData.username,
+        token: expect.any(String),
+      }),
+    )
   })
 
   it('same user cannot be registered twice', async function () {
@@ -40,7 +45,9 @@ describe('Tests without pre-registration', () => {
     expect(responseDuplicate.statusCode).to.equal(409)
 
     const error = new ErrorResponseDTO(responseDuplicate.body)
-    expect(error.message).to.equal('duplicate user')
+    expect(error).to.deep.include({
+      message: 'duplicate user',
+    })
   })
 
   it('login', async function () {
@@ -50,8 +57,10 @@ describe('Tests without pre-registration', () => {
     expect(response.statusCode).to.equal(200)
 
     const user = new UserResponseDTO(response.body)
-    expect(user.email).to.equal(testUserData.email)
-    expect(user.username).to.equal(testUserData.username)
+    expect(user).to.deep.include({
+      email: testUserData.email,
+      username: testUserData.username,
+    })
   })
 
   it('cannot login with invalid credentials', async function () {
@@ -59,7 +68,9 @@ describe('Tests without pre-registration', () => {
     expect(response.statusCode).to.equal(401)
 
     const error = new ErrorResponseDTO(response.body)
-    expect(error.message).to.equal('An error has occurred')
+    expect(error).to.deep.include({
+      message: 'An error has occurred',
+    })
   })
 
   it('get all articles', async function () {
@@ -70,9 +81,13 @@ describe('Tests without pre-registration', () => {
     expect(articlesData.articles).to.have.length.greaterThan(0)
 
     const article = articlesData.articles[0]
-    expect(article.title).to.be.a('string')
-    expect(article.description).to.be.a('string')
-    expect(article.authorUsername).to.be.a('string')
+    expect(article).toEqual(
+      expect.objectContaining({
+        title: expect.any(String),
+        description: expect.any(String),
+        authorUsername: expect.any(String),
+      }),
+    )
   })
 
   it('get articles by author', async function () {
@@ -87,7 +102,9 @@ describe('Tests without pre-registration', () => {
     expect(articlesByAuthor.articles).to.have.lengthOf(expectedCount)
 
     articlesByAuthor.articles.forEach(article => {
-      expect(article.authorUsername).to.equal(authorUsername)
+      expect(article).to.deep.include({
+        authorUsername,
+      })
     })
   })
 
@@ -120,14 +137,17 @@ describe('Tests with pre-registerd user', () => {
     expect(response.statusCode).to.equal(200)
 
     const user = new UserResponseDTO(response.body)
-    expect(user.email).to.equal(testUserData.email)
-    expect(user.username).to.equal(testUserData.username)
-    expect(user.token).to.equal(testUserData.token)
+    expect(user).to.deep.include({
+      email: testUserData.email,
+      username: testUserData.username,
+      token: testUserData.token,
+    })
   })
 
   it('update current user', async function () {
     const randomLetters = getRandomLetters(7)
     const updateData = {
+      ...defaultUser,
       email: testUserData.email + randomLetters,
       username: testUserData.username + randomLetters,
       bio: 'This is my updated bio' + randomLetters,
@@ -137,10 +157,15 @@ describe('Tests with pre-registerd user', () => {
     expect(response.statusCode).to.equal(200)
 
     const user = new UserResponseDTO(response.body)
-    expect(user.email).to.equal(updateData.email)
-    expect(user.username).to.equal(updateData.username)
-    expect(user.bio).to.equal(updateData.bio)
-    expect(user.image).to.equal(updateData.image)
+    expect(user).toEqual(
+      expect.objectContaining({
+        email: updateData.email,
+        username: updateData.username,
+        bio: updateData.bio,
+        image: updateData.image,
+        token: expect.any(String),
+      }),
+    )
     expect(user.token).to.have.length.greaterThan(0)
   })
 
@@ -153,7 +178,9 @@ describe('Tests with pre-registerd user', () => {
     expect(response.statusCode).to.equal(500)
 
     const error = new ErrorResponseDTO(response.body)
-    expect(error.message).to.equal('An error has occurred')
+    expect(error).to.deep.include({
+      message: 'An error has occurred',
+    })
   })
 
   it('cannot update current user with invalid attribute name', async function () {
@@ -161,7 +188,9 @@ describe('Tests with pre-registerd user', () => {
     expect(response.statusCode).to.equal(500)
 
     const error = new ErrorResponseDTO(response.body)
-    expect(error.message).to.equal('An error has occurred')
+    expect(error).to.deep.include({
+      message: 'An error has occurred',
+    })
   })
 
   it('current user not changed when updating with no parameters', async function () {
@@ -169,10 +198,15 @@ describe('Tests with pre-registerd user', () => {
     expect(response.statusCode).to.equal(200)
 
     const user = new UserResponseDTO(response.body)
-    expect(user.email).to.equal(testUserData.email)
-    expect(user.username).to.equal(testUserData.username)
-    expect(user.bio).to.equal(testUserData.bio)
-    expect(user.image).to.equal(testUserData.image)
+    expect(user).toEqual(
+      expect.objectContaining({
+        email: testUserData.email,
+        username: testUserData.username,
+        bio: testUserData.bio,
+        image: testUserData.image,
+        token: expect.any(String),
+      }),
+    )
     expect(user.token).to.have.length.greaterThan(0)
   })
 
@@ -182,11 +216,15 @@ describe('Tests with pre-registerd user', () => {
     expect(response.statusCode).to.equal(201)
 
     const article = new ArticleResponseDTO(response.body)
-    expect(article.title).to.equal(articleData.title)
-    expect(article.description).to.equal(articleData.description)
-    expect(article.body).to.equal(articleData.body)
-    expect(article.tagList).to.deep.equal(articleData.tagList.sort())
-    expect(article.authorUsername).to.equal(testUserData.username)
+    expect(article).toEqual(
+      expect.objectContaining({
+        title: articleData.title,
+        description: articleData.description,
+        body: articleData.body,
+        tagList: [...articleData.tagList].sort(),
+        authorUsername: testUserData.username,
+      }),
+    )
   })
 
   it('delete article', async function () {
@@ -200,7 +238,9 @@ describe('Tests with pre-registerd user', () => {
     const getResponse = await getArticleBySlug(slug)
     expect(getResponse.statusCode).to.equal(404)
     const error = new ErrorResponseDTO(getResponse.body)
-    expect(error.message).to.equal('not found')
+    expect(error).to.deep.include({
+      message: 'not found',
+    })
   })
 
   it('cannot delete nonexistent article', async function () {
@@ -209,7 +249,9 @@ describe('Tests with pre-registerd user', () => {
     const deleteResponse = await deleteArticle(slug)
     expect(deleteResponse.statusCode).to.equal(404)
     const error = new ErrorResponseDTO(deleteResponse.body)
-    expect(error.message).to.equal('not found')
+    expect(error).to.deep.include({
+      message: 'not found',
+    })
   })
 
   it('get articles by tag', async function () {

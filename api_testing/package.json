@@ -10,7 +10,7 @@
     "start-server": "dotenv -e .env -- npm run start --prefix ./app",
     "pretest": "npm run lint-fix",
     "test": "node ./support/start-and-test.js",
-    "test-got-run": "cross-env APICLIENT=got npm test",
+    "test-got-run": "cross-env API_CLIENT=got npm test",
     "test-got": "run-s pretest test-got-run",
     "get-report": "npx vite preview --outDir html"
   },

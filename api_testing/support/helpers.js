@@ -1,3 +1,6 @@
+import defaultUser from '../fixtures/user.json'
+import defaultArticle from '../fixtures/article.json'
+
 export const getRandomLetters = (length) => {
   let result = ''
   const alphabet = 'abcdefghijklmnopqrstuvwxyz'
@@ -10,17 +13,17 @@ export const getRandomLetters = (length) => {
 export function generateRegisterUserData() {
   const randomLetters = getRandomLetters(10)
   return {
+    ...defaultUser,
     email: `user_${randomLetters}@mymail.com`,
     password: 'Yauhen12345',
     username: `user_${randomLetters}`,
-    bio: '',
-    image: '',
   }
 }
 
 export const generateArticleData = () => {
   const randomLetters = getRandomLetters(7)
   return {
+    ...defaultArticle,
     title: `Title ${randomLetters}`,
     description: `Description ${randomLetters}`,
     body: `Article body ${randomLetters}`,

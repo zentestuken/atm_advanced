@@ -4,7 +4,6 @@ import got from 'got'
 import logger from './logger.js'
 
 const apiBaseUrl = `http://${process.env.API_HOST}:${process.env.API_PORT}${process.env.API_PREFIX}`
-const requestTimeout = 10_000
 
 function getCallData(path, params, method, body, responseOrError, isError = false) {
   const responseData = isError ? responseOrError.response || null : responseOrError
@@ -13,12 +12,12 @@ function getCallData(path, params, method, body, responseOrError, isError = fals
     request: {
       path: path,
       method: method,
-      body: body || null,
+      body: Object.keys(body).length ? body : null,
       params: params || null,
     },
     response: {
-      statusCode: responseData?.status || responseOrError?.code || 'Unknown',
-      status: responseData?.statusText || 'Unknown',
+      statusCode: responseData?.status || responseData?.statusCode || responseOrError?.code || 'Unknown',
+      status: responseData?.statusText || responseData?.statusMessage || 'Unknown',
       body: responseData?.data || responseData?.body || null,
     },
   }
@@ -39,8 +38,9 @@ const apiRequestAxios = async ({ path, method = 'GET', body = {}, params }) => {
         'X-Requested-With': 'XMLHttpRequest'
       },
       data: body,
-      timeout: requestTimeout,
+      timeout: process.env.API_TIMEOUT || 10_000,
     })
+    console.log('AXIOS')
     return getCallData(path, params, method, body, response)
   } catch(error) {
     throw getCallData(path, params, method, body, error, true)
@@ -56,34 +56,29 @@ const apiRequestGot = async ({ path, method = 'GET', body = {}, params }) => {
       Authorization: process.env.TOKEN ? `Token ${process.env.TOKEN}` : '',
       'X-Requested-With': 'XMLHttpRequest'
     },
-    timeout: { request: requestTimeout }
+    timeout: { request: +process.env.API_TIMEOUT || 10_000 }
   }
   if (method !== 'GET' && Object.keys(body).length > 0) {
     requestOptions.json = body
   }
-  const responseData = await got(requestOptions)
-    .catch(error => {
-      if (error.response) {
-        return error.response
-      } else throw error
-    })
-  const response = {
-    statusCode: responseData.statusCode,
-    body: responseData.body ? JSON.parse(responseData.body) : undefined
+  let response
+  try {
+    response = await got(requestOptions)
+    console.log('GOT')
+
+    if (response.body) response.body = JSON.parse(response.body)
+    return getCallData(path, params, method, body, response)
+  } catch(error) {
+    if (error.response?.body) error.response.body = JSON.parse(error.response.body)
+    throw getCallData(path, params, method, body, error, true)
   }
-  return response
 }
 
 const getBaseRequest = () => {
-  if (!process.env.APICLIENT) return apiRequestAxios
-  switch (process.env.APICLIENT.toLowerCase()) {
-    case 'axios':
-      return apiRequestAxios
-    case 'got':
-      return apiRequestGot
-    default:
-      return apiRequestAxios
+  if (process.env.API_CLIENT && process.env.API_CLIENT.toLowerCase() === 'got') {
+    return apiRequestGot
   }
+  return apiRequestAxios
 }
 
 export default async function(callArgs, successMsg, errorMsg) {
