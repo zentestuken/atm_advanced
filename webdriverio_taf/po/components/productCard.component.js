@@ -1,19 +1,25 @@
-import { within } from '@testing-library/webdriverio'
-
 export default class ProductCard {
   constructor (browser, productName) {
     this.browser = browser
-    this.rootEl = () => this.browser.$$('[class^="Product__Container"]').find(async (el) => {
+    this.productName = productName
+  }
+
+  async rootEl () {
+    const elements = await this.browser.$$('[class^="Product__Container"]')
+    for (const el of elements) {
       const text = await el.getText()
-      return text.includes(productName)
-    })
+      if (text.includes(this.productName)) {
+        return el
+      }
+    }
+    throw new Error(`Product "${this.productName}" not found`)
   }
 
   async getAddToCartButton () {
-    return within(await this.rootEl()).getByRole('button', { name: 'Add to cart' })
+    return (await this.rootEl()).$('button=Add to cart')
   }
 
-  get priceLabel () {
-    return this.rootEl().$('div[class^="Product__Price"]')
+  async getPriceLabel () {
+    return (await this.rootEl()).$('div[class^="Product__Price"]')
   }
 }
