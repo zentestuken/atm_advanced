@@ -59,11 +59,8 @@ class ShopPage {
     return sizeFilter.click()
   }
 
-  openCart () {
-    return this.browser.$('button[class^="Cart__CartButton"]').click()
-  }
-
-  closeCart () {
+  toggleCart ({ highlight = false } = {}) {
+    if (highlight) return this.browser.$('button[class^="Cart__CartButton"]').highlightAndClick()
     return this.browser.$('button[class^="Cart__CartButton"]').click()
   }
 }

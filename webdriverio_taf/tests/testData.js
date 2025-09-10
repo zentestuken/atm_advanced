@@ -23,4 +23,8 @@ export default {
       price: '10.90',
     },
   ],
+  addToCartButton: {
+    colorDefault: 'rgba(27,26,32,1)',
+    colorHover: 'rgba(234,191,0,1)',
+  }
 }

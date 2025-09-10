@@ -1,11 +1,10 @@
 import ShopPage from '../po/pages/shop.page.js'
 import {
   getPriceLabelForPrices,
-  waitForAlert,
   getExpectedAlertText,
-  scrollToElement,
-  checkElementInViewport,
-} from '../utils/helpers.js'
+  setupAlertCapture,
+  waitForAlert,
+} from '../support/helpers.js'
 import testData from './testData'
 
 let shopPage
@@ -14,7 +13,8 @@ describe('Shopping cart tests', () => {
   beforeEach(async () => {
     shopPage = new ShopPage(browser)
     await shopPage.open()
-    expect((await shopPage.productCards).length).toBeGreaterThanOrEqual(1)
+    await setupAlertCapture(browser)
+    await expect((await shopPage.productCards).length).toBeGreaterThanOrEqual(1)
   })
 
   it('Verify default product cards count', async () => {
@@ -132,10 +132,7 @@ describe('Shopping cart tests', () => {
     expect(await productRow.rootEl).toBeDisplayed()
 
     await (await shopPage.cart.getCheckoutButton()).click()
-
-    await waitForAlert(browser)
-    expect(await browser.getAlertText())
-      .toMatch(getExpectedAlertText(testData.products[2].price))
+    await waitForAlert(browser, getExpectedAlertText(testData.products[2].price))
   })
 
   it('Correct checkout alert shown with multiple products', async () => {
@@ -154,21 +151,41 @@ describe('Shopping cart tests', () => {
     expect(await productRow3.rootEl).toBeDisplayed()
 
     await (await shopPage.cart.getCheckoutButton()).click()
-    await waitForAlert(browser)
-    expect(await browser.getAlertText())
-      .toMatch(getExpectedAlertText([
-        testData.products[1].price,
-        testData.products[3].price,
-        testData.products[4].price
-      ]))
+    await waitForAlert(browser, getExpectedAlertText([
+      testData.products[1].price,
+      testData.products[3].price,
+      testData.products[4].price
+    ]))
+  })
+
+  it('Correct checkout alert shown with no products (with highlighting)', async () => {
+    const noProductsCheckoutText = 'Add some product in the cart!'
+
+    await shopPage.toggleCart({ highlight: true })
+    await expect(await shopPage.cart.contentBlock).toBeDisplayed()
+    expect(await shopPage.cart.counter).toHaveText('0')
+
+    await (await shopPage.cart.getCheckoutButton()).highlightAndClick()
+    await waitForAlert(browser, noProductsCheckoutText)
   })
 
   it('Scroll product card into view', async () => {
     const productCard = shopPage.getProductCard(testData.products[3].name)
-    expect(await productCard.rootEl).toBeDisplayed()
-    expect(await checkElementInViewport(browser, productCard.rootEl)).toBe(false)
+    expect(await productCard.rootEl()).toBeDisplayed()
+    expect(await browser.checkElementInViewport(await productCard.rootEl())).toBe(false)
 
-    await scrollToElement(browser, productCard.rootEl)
-    expect(await checkElementInViewport(browser, productCard.rootEl)).toBe(true)
+    await browser.scrollToElement(await productCard.rootEl())
+    expect(await browser.checkElementInViewport(await productCard.rootEl())).toBe(true)
+  })
+
+  it('"Add to cart" button changes color when hovering over product cart', async () => {
+    const productCard = shopPage.getProductCard(testData.products[0].name)
+    expect(await productCard.rootEl()).toBeDisplayed()
+    expect(await (await productCard.getAddToCartButton()).getCSSProperty('background-color'))
+      .toHaveProperty('value', testData.addToCartButton.colorDefault)
+
+    await (await productCard.rootEl()).highlightAndHover()
+    expect(await (await productCard.getAddToCartButton()).getCSSProperty('background-color'))
+      .toHaveProperty('value', testData.addToCartButton.colorHover)
   })
 })

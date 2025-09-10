@@ -1,4 +1,5 @@
 import allureReporter from '@wdio/allure-reporter';
+import registerCustomCommands from './support/commands.js';
 
 export const config = {
     //
@@ -52,11 +53,11 @@ export const config = {
     // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [{
-        browserName: 'chrome',
+      browserName: 'chrome',
     // }, {
       // browserName: 'firefox',
-    }, {
-        browserName: 'MicrosoftEdge'
+    // }, {
+      // browserName: 'MicrosoftEdge'
     }],
 
     //
@@ -192,8 +193,9 @@ export const config = {
      * @param {Array.<String>} specs        List of spec file paths that are to be run
      * @param {object}         browser      instance of created browser/device session
      */
-    // before: function (capabilities, specs) {
-    // },
+    before: async function (capabilities, specs) {
+      registerCustomCommands()
+    },
     /**
      * Runs before a WebdriverIO command gets executed.
      * @param {string} commandName hook command name
@@ -259,8 +261,6 @@ export const config = {
         );
       }
     },
-
-
     /**
      * Hook that gets executed after the suite has ended
      * @param {object} suite suite details
