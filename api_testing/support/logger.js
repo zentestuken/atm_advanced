@@ -67,12 +67,16 @@ function logMessage(level, message, data = null, context = null) {
   })
 }
 
+function getLogFn(level) {
+  return newLogger.isLevelEnabled(level) ? (...args) => newLogger.log(level, { ...args }) : () => {}
+}
+
 const logger = {
-  error: (message, data, context) => logMessage('error', message, data, context),
-  warn: (message, data, context) => logMessage('warn', message, data, context),
-  info: (message, data, context) => logMessage('info', message, data, context),
-  debug: (message, data, context) => logMessage('debug', message, data, context),
-  trace: (message, data, context) => logMessage('trace', message, data, context),
+  error: getLogFn('error'),
+  warn: getLogFn('warn'),
+  info: getLogFn('info'),
+  debug: getLogFn('debug'),
+  trace: getLogFn('trace'),
 }
 
 export default logger
