@@ -158,7 +158,7 @@ describe('Shopping cart tests', () => {
     ]))
   })
 
-  it('Correct checkout alert shown with no products (with highlighting)', async () => {
+  it('Correct checkout alert shown with no products (with custom click)', async () => {
     const noProductsCheckoutText = 'Add some product in the cart!'
 
     await shopPage.toggleCart({ highlight: true })
@@ -178,7 +178,7 @@ describe('Shopping cart tests', () => {
     expect(await browser.checkElementInViewport(await productCard.rootEl())).toBe(true)
   })
 
-  it('"Add to cart" button changes color when hovering over product cart', async () => {
+  it('"Add to cart" button changes color when hovering over product cart (with custom hover)', async () => {
     const productCard = shopPage.getProductCard(testData.products[0].name)
     expect(await productCard.rootEl()).toBeDisplayed()
     expect(await (await productCard.getAddToCartButton()).getCSSProperty('background-color'))
