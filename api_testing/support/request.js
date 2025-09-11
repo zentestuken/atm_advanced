@@ -38,7 +38,6 @@ const apiRequestAxios = async ({ path, method = 'GET', body = {}, params }) => {
       data: body,
       timeout: process.env.API_TIMEOUT || 10_000,
     })
-    console.log('AXIOS')
     return getCallData(path, params, method, body, response)
   } catch(error) {
     throw getCallData(path, params, method, body, error, true)
@@ -62,8 +61,6 @@ const apiRequestGot = async ({ path, method = 'GET', body = {}, params }) => {
   let response
   try {
     response = await got(requestOptions)
-    console.log('GOT')
-
     if (response.body) response.body = JSON.parse(response.body)
     return getCallData(path, params, method, body, response)
   } catch(error) {

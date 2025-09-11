@@ -54,21 +54,15 @@ const newLogger = createLogger({
   exitOnError: false
 })
 
-function logMessage(level, message, data = null, context = null) {
-  // Only log if the level is enabled
-  if (!newLogger.isLevelEnabled(level)) {
-    return
-  }
-
-  newLogger.log(level, {
-    message,
-    context,
-    data
-  })
-}
-
 function getLogFn(level) {
-  return newLogger.isLevelEnabled(level) ? (...args) => newLogger.log(level, { ...args }) : () => {}
+  return newLogger.isLevelEnabled(level) ? (...args) => {
+    const [message, data, context] = args
+    return newLogger.log(level, {
+      message,
+      data: data || null,
+      context: context || null,
+    })
+  } : () => {}
 }
 
 const logger = {
