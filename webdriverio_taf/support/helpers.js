@@ -1,3 +1,25 @@
+import allureReporter from '@wdio/allure-reporter'
+
+export async function step(description, actionFn) {
+  try {
+    allureReporter.addStep(description)
+    return await actionFn()
+  } catch (error) {
+    allureReporter.addStep(`${description} - FAILED`, undefined, 'failed')
+    throw error
+  }
+}
+
+export async function assert(description, assertionFn) {
+  try {
+    await assertionFn()
+    allureReporter.addStep(`Assert ${description} - PASSED`)
+  } catch (error) {
+    allureReporter.addStep(`Assert ${description} - FAILED`, undefined, 'failed')
+    throw error
+  }
+}
+
 export const getPriceLabelForPrices = (prices) => {
   let priceLabels = Array.isArray(prices) ? prices : [prices]
   const sum = priceLabels

@@ -1,3 +1,5 @@
+import { step } from '../../support/helpers.js'
+
 export default class SizeFilter {
   constructor(browser, size) {
     this.browser = browser
@@ -15,6 +17,8 @@ export default class SizeFilter {
   }
 
   async click() {
-    return this.rootEl.$('span').click()
+    return step(`Click on size filter "${this.size}"`, async () => {
+      return this.rootEl.$('span').click()
+    })
   }
 }

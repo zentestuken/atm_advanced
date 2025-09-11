@@ -1,3 +1,5 @@
+import { step } from '../../support/helpers.js'
+
 export default class ProductRowInCart {
   constructor (browser, productName) {
     this.browser = browser
@@ -31,10 +33,14 @@ export default class ProductRowInCart {
   }
 
   increaseQuantity () {
-    return this.plusButton.click()
+    return step(`Increase quantity for "${this.productName}"`, async () => {
+      return this.plusButton.click()
+    })
   }
 
   decreaseQuantity () {
-    return this.minusButton.click()
+    return step(`Decrease quantity for "${this.productName}"`, async () => {
+      return this.minusButton.click()
+    })
   }
 }

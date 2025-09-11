@@ -2,6 +2,7 @@ import ProductCard from '../components/productCard.component'
 import Cart from '../components/cart.component'
 import ProductRowInCart from '../components/productRowInCart.component'
 import SizeFilter from '../components/sizeFilter.component'
+import { step } from '../../support/helpers.js'
 
 class ShopPage {
   constructor (browser) {
@@ -19,7 +20,9 @@ class ShopPage {
   }
 
   open () {
-    return this.browser.url(this.url)
+    return step(`Navigate to shop page "${this.url}"`, async () => {
+      await this.browser.url(this.url)
+    })
   }
 
   getProductCard (productName) {
@@ -31,11 +34,13 @@ class ShopPage {
   }
 
   async getProductCounterText () {
-    const locator = this.browser.$('*=Product(s) found')
-    const textContent = await locator.getText()
-    const match = textContent.match(/\d+/)
-    const number = match ? parseInt(match[0], 10) : null
-    return number
+    return await step('Get product counter text', async () => {
+      const locator = this.browser.$('*=Product(s) found')
+      const textContent = await locator.getText()
+      const match = textContent.match(/\d+/)
+      const number = match ? parseInt(match[0], 10) : null
+      return number
+    })
   }
 
   getSizeFilter(size) {
@@ -43,23 +48,31 @@ class ShopPage {
   }
 
   async addProductToCart (productName) {
-    const productCard = this.getProductCard(productName)
-    return (await productCard.addToCartButton).click()
+    await step(`Add product to cart "${productName}"`, async () => {
+      const productCard = this.getProductCard(productName)
+      return (await productCard.addToCartButton).click()
+    })
   }
 
   async hoverOverProductCard (productName) {
-    const productCard = this.getProductCard(productName)
-    return (await productCard.rootEl).moveTo()
+    await step(`Hover over product card "${productName}"`, async () => {
+      const productCard = this.getProductCard(productName)
+      return (await productCard.rootEl).moveTo()
+    })
   }
 
   selectSizeFilter (size) {
-    const sizeFilter = this.getSizeFilter(size)
-    return sizeFilter.click()
+    return step(`Select size filter "${size}"`, async () => {
+      const sizeFilter = this.getSizeFilter(size)
+      return sizeFilter.click()
+    })
   }
 
   toggleCart ({ highlight = false } = {}) {
-    if (highlight) return this.toggleCartButton.highlightAndClick()
-    return this.toggleCartButton.click()
+    return step(`Toggle cart${highlight ? '(with highlighting)' : ''}`, async () => {
+      if (highlight) return this.toggleCartButton.highlightAndClick()
+      return this.toggleCartButton.click()
+    })
   }
 }
 

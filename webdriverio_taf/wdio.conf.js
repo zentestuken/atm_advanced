@@ -131,7 +131,13 @@ export const config = {
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
     reporters: ['spec',
-      ['allure', {outputDir: 'artifacts/allure-results'}]
+      ['allure', {
+        outputDir: 'artifacts/allure-results',
+        disableWebdriverStepsReporting: true,
+        disableWebdriverScreenshotsReporting: true,
+        disableMochaHooks: false,
+        addConsoleLogs: true,
+      }],
     ],
 
     // Options to be passed to Mocha.
@@ -201,20 +207,8 @@ export const config = {
      * @param {string} commandName hook command name
      * @param {Array} args arguments that command would receive
      */
-    beforeCommand: function (commandName, args) {
-        // Log navigation commands
-        if (commandName === 'url') {
-            allureReporter.addStep(`Navigate to: ${args[0]}`);
-        } else if (![
-          'EXECUTE',
-          'SCRIPTCALLFUNCTION',
-          'BROWSINGCONTEXTLOCATENODES',
-          'EXECUTEASYNC',
-          'EMIT'
-        ].includes(commandName.toUpperCase())) {
-          allureReporter.addStep(`${commandName.toUpperCase()}: ${JSON.stringify(args)}`);
-        }
-    },
+    // beforeCommand: function (commandName, args) {
+    // },
     /**
      * Hook that gets executed before the suite starts
      * @param {object} suite suite details
@@ -236,11 +230,8 @@ export const config = {
      * Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
      * afterEach in Mocha)
      */
-    afterHook: function (test, context, { error, result, duration, passed, retries }, hookName) {
-        if (error) {
-            allureReporter.addStep(`Hook ${hookName} failed: ${error.message}`);
-        }
-    },
+    // afterHook: function (test, context, { error, result, duration, passed, retries }, hookName) {
+    // },
     /**
      * Function to be executed after a test (in Mocha/Jasmine only)
      * @param {object}  test             test object
@@ -314,9 +305,8 @@ export const config = {
     * Hook that gets executed before a WebdriverIO assertion happens.
     * @param {object} params information about the assertion to be executed
     */
-    beforeAssertion: function(params) {
-      allureReporter.addStep(`ASSERT: ${JSON.stringify(params, null, 2)}`);
-    },
+    // beforeAssertion: function(params) {
+    // },
     /**
     * Hook that gets executed after a WebdriverIO assertion happened.
     * @param {object} params information about the assertion that was executed, including its results
