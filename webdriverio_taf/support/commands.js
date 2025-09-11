@@ -53,6 +53,17 @@ export default () => {
     await this.waitForDisplayed()
     await this.moveTo(xOffset, yOffset)
     await this.highlight({ color: 'yellow', highlightTime })
-    await this.click()
   }, true)
+
+  browser.addCommand('resetCursor', async function () {
+    await browser.performActions([
+      {
+        type: 'pointer',
+        id: 'mouse',
+        parameters: { pointerType: 'mouse' },
+        actions: [{ type: 'pointerMove', x: 0, y: 0 }],
+      },
+    ])
+    await browser.pause(500)
+  })
 }

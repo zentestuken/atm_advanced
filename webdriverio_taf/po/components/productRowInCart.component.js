@@ -1,37 +1,40 @@
-import { within } from '@testing-library/webdriverio'
-
 export default class ProductRowInCart {
   constructor (browser, productName) {
     this.browser = browser
-    this.rootEl = () => this.browser.$$('[class^="CartProduct__Container"]').find(async (el) => {
-      const text = await el.getText()
-      return text.includes(productName)
-    })
+    this.productName = productName
   }
 
-  async getPlusButton() {
-    return within(await this.rootEl()).getByRole('button', { name: '+' })
+  get rootEl () {
+    return this.browser
+      .$('//div[starts-with(@class, "CartProduct__Container") and ' +
+        `.//p[text()="${this.productName}"]]`)
   }
 
-  async getMinusButton () {
-    return within(await this.rootEl()).getByRole('button', { name: '-' })
+  get plusButton() {
+    return this.rootEl.$('button=+')
+  }
+
+  get minusButton () {
+    return this.rootEl.$('button=-')
   }
 
   get priceLabel () {
-    return this.rootEl().$('div[class^="CartProduct__Price"] p')
+    return this.rootEl.$('div[class^="CartProduct__Price"] p')
   }
 
   get removeButton() {
-    return this.rootEl().$('button[title="remove product from cart"]')
+    return this.rootEl.$('button[title="remove product from cart"]')
   }
 
-  get descriptionBlock() { return this.rootEl().$('p[class^="CartProduct__Desc"]') }
-
-  async increaseQuantity () {
-    return (await this.getPlusButton()).click()
+  get descriptionBlock() {
+    return this.rootEl.$('p[class^="CartProduct__Desc"]')
   }
 
-  async decreaseQuantity () {
-    return (await this.getMinusButton()).click()
+  increaseQuantity () {
+    return this.plusButton.click()
+  }
+
+  decreaseQuantity () {
+    return this.minusButton.click()
   }
 }

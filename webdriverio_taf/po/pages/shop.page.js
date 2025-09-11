@@ -1,23 +1,25 @@
 import ProductCard from '../components/productCard.component'
 import Cart from '../components/cart.component'
 import ProductRowInCart from '../components/productRowInCart.component'
-import { within } from '@testing-library/webdriverio'
 import SizeFilter from '../components/sizeFilter.component'
 
 class ShopPage {
   constructor (browser) {
     this.url = '/'
     this.browser = browser
-    this.page = () => within(this.browser.$('body'))
     this.cart = new Cart(browser)
-  }
-
-  open () {
-    return this.browser.url(this.url)
   }
 
   get productCards () {
     return this.browser.$$('[class^="Product__Container"]')
+  }
+
+  get toggleCartButton () {
+    return this.browser.$('button[class^="Cart__CartButton"]')
+  }
+
+  open () {
+    return this.browser.url(this.url)
   }
 
   getProductCard (productName) {
@@ -40,18 +42,14 @@ class ShopPage {
     return new SizeFilter(this.browser, size)
   }
 
-  get getCartCounter () {
-    return this.page().getByTitle('Products in cart quantity')
-  }
-
   async addProductToCart (productName) {
     const productCard = this.getProductCard(productName)
-    return (await productCard.getAddToCartButton()).click()
+    return (await productCard.addToCartButton).click()
   }
 
-  hoverOverProductCard (productName) {
+  async hoverOverProductCard (productName) {
     const productCard = this.getProductCard(productName)
-    return productCard.rootEl().moveTo()
+    return (await productCard.rootEl).moveTo()
   }
 
   selectSizeFilter (size) {
@@ -60,8 +58,8 @@ class ShopPage {
   }
 
   toggleCart ({ highlight = false } = {}) {
-    if (highlight) return this.browser.$('button[class^="Cart__CartButton"]').highlightAndClick()
-    return this.browser.$('button[class^="Cart__CartButton"]').click()
+    if (highlight) return this.toggleCartButton.highlightAndClick()
+    return this.toggleCartButton.click()
   }
 }
 

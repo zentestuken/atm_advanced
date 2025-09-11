@@ -54,3 +54,12 @@ export const waitForAlert = async (browser, expectedText, timeout = 5000) => {
   const expectedType = expectedText instanceof RegExp ? 'pattern' : 'text'
   throw new Error(`Expected alert ${expectedType} "${expectedText}" not found within ${timeout} ms`)
 }
+
+// Normalize color to rgba format for consistent comparison
+// Because different browsers may return rgb or rgba
+export const getRgbaColorValue = (color) => {
+  if (color.startsWith('rgb(')) {
+    return color.replace('rgb(', 'rgba(').replace(')', ',1)')
+  }
+  return color
+}
