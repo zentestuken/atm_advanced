@@ -7,8 +7,8 @@ const apiBaseUrl = `http://${process.env.API_HOST}:${process.env.API_PORT}${proc
 
 function getCallData(path, params, method, body, responseOrError, isError = false) {
   const responseData = isError ? responseOrError.response || null : responseOrError
-  const callData = {
-    message: isError ? responseOrError.message || 'Unknown error' : '',
+  return {
+    ...(isError ? { message: responseOrError.message || 'Unknown error'} : {}),
     request: {
       path: path,
       method: method,
@@ -21,8 +21,6 @@ function getCallData(path, params, method, body, responseOrError, isError = fals
       body: responseData?.data || responseData?.body || null,
     },
   }
-  if (!isError) delete callData.message
-  return callData
 }
 
 const apiRequestAxios = async ({ path, method = 'GET', body = {}, params }) => {
