@@ -55,14 +55,9 @@ const newLogger = createLogger({
 })
 
 function getLogFn(level) {
-  return newLogger.isLevelEnabled(level) ? (...args) => {
-    const [message, data, context] = args
-    return newLogger.log(level, {
-      message,
-      data: data || null,
-      context: context || null,
-    })
-  } : () => {}
+  return newLogger.isLevelEnabled(level)
+    ? (message, data = null, context = null) => newLogger.log(level, { message, data, context })
+    : () => {}
 }
 
 const logger = {
