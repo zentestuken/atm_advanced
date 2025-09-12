@@ -20,6 +20,7 @@ jobs:
           - playwright_taf_bdd
           - unit_testing
           - api_testing
+          - webdriverio_taf
 
     steps:
       - uses: actions/checkout@v4
