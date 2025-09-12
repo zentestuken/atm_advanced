@@ -1,4 +1,4 @@
-import { step } from '../../support/helpers.js'
+import { step } from '../../support/helpers'
 
 export default class ProductRowInCart {
   constructor (browser, productName) {
@@ -41,6 +41,12 @@ export default class ProductRowInCart {
   decreaseQuantity () {
     return step(`Decrease quantity for "${this.productName}"`, async () => {
       return this.minusButton.click()
+    })
+  }
+
+  removeFromCart () {
+    return step(`Remove "${this.productName}" from cart`, async () => {
+      return this.removeButton.click()
     })
   }
 }

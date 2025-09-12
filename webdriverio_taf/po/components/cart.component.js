@@ -1,3 +1,5 @@
+import { step } from '../../support/helpers'
+
 class Cart {
   constructor (browser) {
     this.browser = browser
@@ -29,6 +31,12 @@ class Cart {
 
   get counter () {
     return this.rootEl.$('div[class^="Cart__CartQuantity"]')
+  }
+
+  clickCheckout () {
+    return step('Click on "Checkout" button', async () => {
+      return this.checkoutButton.click()
+    })
   }
 }
 

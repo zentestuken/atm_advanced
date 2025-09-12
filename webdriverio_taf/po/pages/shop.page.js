@@ -2,7 +2,7 @@ import ProductCard from '../components/productCard.component'
 import Cart from '../components/cart.component'
 import ProductRowInCart from '../components/productRowInCart.component'
 import SizeFilter from '../components/sizeFilter.component'
-import { step } from '../../support/helpers.js'
+import { step } from '../../support/helpers'
 
 class ShopPage {
   constructor (browser) {

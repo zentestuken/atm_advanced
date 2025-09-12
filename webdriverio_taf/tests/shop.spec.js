@@ -1,13 +1,12 @@
-import ShopPage from '../po/pages/shop.page.js'
+import ShopPage from '../po/pages/shop.page'
 import {
   getPriceLabelForPrices,
   getExpectedAlertText,
   setupAlertCapture,
   waitForAlert,
   getRgbaColorValue,
-  // step,
   assert,
-} from '../support/helpers.js'
+} from '../support/helpers'
 import testData from './testData'
 
 let shopPage
@@ -109,7 +108,7 @@ describe('Shopping cart tests', () => {
       await expect(await shopPage.cart.productRows.length).toBe(2)
     })
 
-    await productRow1.removeButton.click()
+    await productRow1.removeFromCart()
     await assert('product 1 removed', async () => {
       await expect(productRow1.rootEl).not.toBeDisplayed()
     })
@@ -216,7 +215,7 @@ describe('Shopping cart tests', () => {
       await expect(productRow.rootEl).toBeDisplayed()
     })
 
-    await shopPage.cart.checkoutButton.click()
+    await shopPage.cart.clickCheckout()
     await assert('checkout alert text', async () => {
       await waitForAlert(browser, getExpectedAlertText(testData.products[2].price))
     })
@@ -245,7 +244,7 @@ describe('Shopping cart tests', () => {
       await expect(productRow3.rootEl).toBeDisplayed()
     })
 
-    await shopPage.cart.checkoutButton.click()
+    await shopPage.cart.clickCheckout()
     await assert('checkout alert text', async () => {
       await waitForAlert(browser, getExpectedAlertText([
         testData.products[1].price,

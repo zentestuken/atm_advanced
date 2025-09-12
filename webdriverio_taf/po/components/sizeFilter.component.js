@@ -1,4 +1,4 @@
-import { step } from '../../support/helpers.js'
+import { step } from '../../support/helpers'
 
 export default class SizeFilter {
   constructor(browser, size) {

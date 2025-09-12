@@ -54,10 +54,10 @@ export const config = {
     //
     capabilities: [{
       browserName: 'chrome',
-    // }, {
-      // browserName: 'firefox',
-    // }, {
-      // browserName: 'MicrosoftEdge'
+    }, {
+      browserName: 'firefox',
+    }, {
+      browserName: 'MicrosoftEdge'
     }],
 
     //
