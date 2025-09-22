@@ -1,43 +1,36 @@
 import allureReporter from '@wdio/allure-reporter'
 
-export async function step(description, actionFn) {
-  try {
-    allureReporter.addStep(description)
-    return await actionFn()
-  } catch (error) {
+export function step(description, actionFn) {
+  return actionFn().then(result => {
+    allureReporter.addStep(`${description} - PASSED`)
+    return result
+  }).catch(error => {
     allureReporter.addStep(`${description} - FAILED`, undefined, 'failed')
     throw error
-  }
+  })
 }
 
-export async function assert(description, assertionFn) {
-  try {
-    await assertionFn()
+export function assert(description, assertionFn) {
+  return assertionFn().then(result => {
     allureReporter.addStep(`Assert ${description} - PASSED`)
-  } catch (error) {
+    return result
+  }).catch(error => {
     allureReporter.addStep(`Assert ${description} - FAILED`, undefined, 'failed')
     throw error
-  }
+  })
 }
 
-export const getPriceLabelForPrices = (prices) => {
+export const getPriceText = (prices, { checkoutAlert = false } = {}) => {
   let priceLabels = Array.isArray(prices) ? prices : [prices]
   const sum = priceLabels
     .reduce((acc, priceLabel) => acc + parseFloat(priceLabel), 0)
     .toFixed(2)
-  return new RegExp(`^\\$\\s*${sum}`)
+  if (checkoutAlert) return new RegExp(`^Checkout - Subtotal: \\$\\s*${sum}`)
+  else return new RegExp(`^\\$\\s*${sum}`)
 }
 
-export const getExpectedAlertText = (prices) => {
-  let priceLabels = Array.isArray(prices) ? prices : [prices]
-  const sum = priceLabels
-    .reduce((acc, priceLabel) => acc + parseFloat(priceLabel), 0)
-    .toFixed(2)
-  return new RegExp(`^Checkout - Subtotal: \\$\\s*${sum}`)
-}
-
-export const setupAlertCapture = async (browser) => {
-  await browser.execute(() => {
+export const setupAlertCapture = (browser) => {
+  return browser.execute(() => {
     window.testAlerts = []
     window.originalAlert = window.alert
 
@@ -51,30 +44,34 @@ export const setupAlertCapture = async (browser) => {
   })
 }
 
-const getLastAlert = async (browser) => {
-  return await browser.execute(() => {
+const getLastAlert = (browser) => {
+  return browser.execute(() => {
     const alerts = window.testAlerts || []
     return alerts.length > 0 ? alerts[alerts.length - 1] : null
   })
 }
 
-export const waitForAlert = async (browser, expectedText, timeout = 5000) => {
-  const startTime = Date.now()
+export const waitForAlert = (browser, expectedText, timeout = 5000) => {
+  return (async () => {
+    const startTime = Date.now()
 
-  while (Date.now() - startTime < timeout) {
-    const alert = await getLastAlert(browser)
-    if (alert) {
-      const matches = expectedText instanceof RegExp
-        ? expectedText.test(alert.message)
-        : alert.message === expectedText
-      if (matches) {
-        return alert
+    while (Date.now() - startTime < timeout) {
+      const alert = await getLastAlert(browser)
+      if (alert) {
+        const matches = expectedText instanceof RegExp
+          ? expectedText.test(alert.message)
+          : alert.message === expectedText
+        if (matches) {
+          return alert
+        }
       }
+      await browser.pause(100)
     }
-    await browser.pause(100)
-  }
-  const expectedType = expectedText instanceof RegExp ? 'pattern' : 'text'
-  throw new Error(`Expected alert ${expectedType} "${expectedText}" not found within ${timeout} ms`)
+    const expectedType = expectedText instanceof RegExp ? 'pattern' : 'text'
+    throw new Error(
+      `Expected alert ${expectedType} "${expectedText}" not found within ${timeout} ms`
+    )
+  })()
 }
 
 // Normalize color to rgba format for consistent comparison

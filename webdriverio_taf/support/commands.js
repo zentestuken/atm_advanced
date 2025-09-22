@@ -1,14 +1,14 @@
 import { step } from '../support/helpers.js'
 
 export default () => {
-  browser.addCommand('scrollToElement', async function (targetElement) {
-    await step('Scroll to element', async () => {
+  browser.addCommand('scrollToElement', function (targetElement) {
+    return step('Scroll to element', async () => {
       const element = typeof targetElement === 'function'
         ? await targetElement()
         : await targetElement
       const location = await element.getLocation()
 
-      await browser.execute((x, y) => {
+      return browser.execute((x, y) => {
         window.scrollTo({
           left: x - window.innerWidth / 2,
           top: y - window.innerHeight / 2,
@@ -17,27 +17,29 @@ export default () => {
     })
   })
 
-  browser.addCommand('checkElementInViewport', async function (targetElement) {
-    const element = typeof targetElement === 'function'
-      ? await targetElement()
-      : await targetElement
-    const size = await element.getSize()
-    return browser.execute((el, elSize) => {
-      const rect = el.getBoundingClientRect()
-      const viewport = {
-        width: window.innerWidth,
-        height: window.innerHeight
-      }
-      return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom - elSize.height * 0.6 <= viewport.height &&
-        rect.right - elSize.height * 0.6 <= viewport.width
-      )
-    }, element, size)
+  browser.addCommand('checkElementInViewport', function (targetElement) {
+    return (async () => {
+      const element = typeof targetElement === 'function'
+        ? await targetElement()
+        : await targetElement
+      const size = await element.getSize()
+      return browser.execute((el, elSize) => {
+        const rect = el.getBoundingClientRect()
+        const viewport = {
+          width: window.innerWidth,
+          height: window.innerHeight
+        }
+        return (
+          rect.top >= 0 &&
+          rect.left >= 0 &&
+          rect.bottom - elSize.height * 0.6 <= viewport.height &&
+          rect.right - elSize.height * 0.6 <= viewport.width
+        )
+      }, element, size)
+    })()
   })
 
-  browser.addCommand('highlight', async function ({ color = 'red', highlightTime = 1000 } = {}) {
+  browser.addCommand('highlight', function ({ color = 'red', highlightTime = 1000 } = {}) {
     return step('Highlight element', async () => {
       await browser.execute((el, highlightColor) => {
         el.style.border = `3px solid ${highlightColor}`
@@ -49,7 +51,7 @@ export default () => {
     })
   }, true)
 
-  browser.addCommand('highlightAndClick', async function ({ highlightTime = 1000 } = {}) {
+  browser.addCommand('highlightAndClick', function ({ highlightTime = 1000 } = {}) {
     return step('Highlight and click element', async () => {
       await this.waitForClickable()
       await this.highlight({ color: 'red', highlightTime })
@@ -57,7 +59,7 @@ export default () => {
     })
   }, true)
 
-  browser.addCommand('highlightAndHover', async function ({ xOffset = 10, yOffset = 10, highlightTime = 1000 } = {}) {
+  browser.addCommand('highlightAndHover', function ({ xOffset = 10, yOffset = 10, highlightTime = 1000 } = {}) {
     return step('Highlight and hover over element', async () => {
       await this.waitForDisplayed()
       await this.moveTo(xOffset, yOffset)
@@ -65,8 +67,8 @@ export default () => {
     })
   }, true)
 
-  browser.addCommand('resetCursor', async function () {
-    await step('Reset mouse cursor position', async () => {
+  browser.addCommand('resetCursor', function () {
+    return step('Reset mouse cursor position', async () => {
       await browser.performActions([
         {
           type: 'pointer',

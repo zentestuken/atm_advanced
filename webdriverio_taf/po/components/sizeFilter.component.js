@@ -1,5 +1,3 @@
-import { step } from '../../support/helpers'
-
 export default class SizeFilter {
   constructor(browser, size) {
     this.browser = browser
@@ -14,11 +12,5 @@ export default class SizeFilter {
 
   get checkbox() {
     return this.rootEl.$('[type=checkbox]')
-  }
-
-  async click() {
-    return step(`Click on size filter "${this.size}"`, async () => {
-      return this.rootEl.$('span').click()
-    })
   }
 }

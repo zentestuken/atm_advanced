@@ -1,4 +1,4 @@
-import { step } from '../../support/helpers'
+const CHECKOUT_BUTTON_TEXT = 'Checkout'
 
 class Cart {
   constructor (browser) {
@@ -14,7 +14,7 @@ class Cart {
   }
 
   get checkoutButton () {
-    return this.rootEl.$('button=Checkout')
+    return this.rootEl.$(`button=${CHECKOUT_BUTTON_TEXT}`)
   }
 
   get subTotalLabel () {
@@ -31,12 +31,6 @@ class Cart {
 
   get counter () {
     return this.rootEl.$('div[class^="Cart__CartQuantity"]')
-  }
-
-  clickCheckout () {
-    return step('Click on "Checkout" button', async () => {
-      return this.checkoutButton.click()
-    })
   }
 }
 

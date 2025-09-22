@@ -1,3 +1,4 @@
+const ADD_BUTTON_TEXT = 'Add to cart'
 export default class ProductCard {
   constructor (browser, productName) {
     this.browser = browser
@@ -11,7 +12,7 @@ export default class ProductCard {
   }
 
   get addToCartButton () {
-    return this.rootEl.$('button=Add to cart')
+    return this.rootEl.$(`button=${ADD_BUTTON_TEXT}`)
   }
 
   get priceLabel () {

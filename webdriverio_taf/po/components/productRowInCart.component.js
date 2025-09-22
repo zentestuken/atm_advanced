@@ -1,4 +1,6 @@
-import { step } from '../../support/helpers'
+const REMOVE_BUTTON_TOOLTIP = 'remove product from cart'
+const PLUS_BUTTON_TEXT = '+'
+const MINUS_BUTTON_TEXT = '-'
 
 export default class ProductRowInCart {
   constructor (browser, productName) {
@@ -13,11 +15,11 @@ export default class ProductRowInCart {
   }
 
   get plusButton() {
-    return this.rootEl.$('button=+')
+    return this.rootEl.$(`button=${PLUS_BUTTON_TEXT}`)
   }
 
   get minusButton () {
-    return this.rootEl.$('button=-')
+    return this.rootEl.$(`button=${MINUS_BUTTON_TEXT}`)
   }
 
   get priceLabel () {
@@ -25,28 +27,10 @@ export default class ProductRowInCart {
   }
 
   get removeButton() {
-    return this.rootEl.$('button[title="remove product from cart"]')
+    return this.rootEl.$(`button[title="${REMOVE_BUTTON_TOOLTIP}"]`)
   }
 
   get descriptionBlock() {
     return this.rootEl.$('p[class^="CartProduct__Desc"]')
-  }
-
-  increaseQuantity () {
-    return step(`Increase quantity for "${this.productName}"`, async () => {
-      return this.plusButton.click()
-    })
-  }
-
-  decreaseQuantity () {
-    return step(`Decrease quantity for "${this.productName}"`, async () => {
-      return this.minusButton.click()
-    })
-  }
-
-  removeFromCart () {
-    return step(`Remove "${this.productName}" from cart`, async () => {
-      return this.removeButton.click()
-    })
   }
 }

@@ -1,12 +1,27 @@
 import ShopPage from '../po/pages/shop.page'
 import {
-  getPriceLabelForPrices,
-  getExpectedAlertText,
+  getPriceText,
   setupAlertCapture,
   waitForAlert,
   getRgbaColorValue,
   assert,
 } from '../support/helpers'
+import {
+  clickCheckout,
+  increaseQuantity,
+  decreaseQuantity,
+  removeFromCart,
+  clickOnSizeFilter,
+  getPageProductCounterText,
+  addProductToCart,
+  hoverOverProductCard,
+  toggleCart,
+} from '../steps/actions'
+import {
+  checkProductCardsCountGreaterThanOrEqual,
+  checkProductCardsCount,
+  checkCartCounter,
+} from '../steps/assertions'
 import testData from './testData'
 
 let shopPage
@@ -16,22 +31,21 @@ describe('Shopping cart tests', () => {
     shopPage = new ShopPage(browser)
     await shopPage.open()
     await setupAlertCapture(browser)
-    await assert('product cards count', async () => {
-      await expect(await shopPage.productCards.length).toBeGreaterThanOrEqual(1)
-    })
+    await checkProductCardsCountGreaterThanOrEqual(shopPage, 1)
   })
 
   it('Verify default product cards count', async () => {
     await assert('page title', async () => {
       await expect(browser).toHaveTitle(testData.shopPageTitle)
     })
-    await assert('product cards count', async () => {
-      await expect(await shopPage.productCards.length).toBe(testData.defaultProductsCount)
+    await checkProductCardsCount(shopPage, testData.defaultProductsCount)
+    await assert('product counter text', async () => {
+      await expect(await getPageProductCounterText(browser)).toBe(testData.defaultProductsCount)
     })
   })
 
   it('Product can be added to cart', async () => {
-    await shopPage.addProductToCart(testData.products[0].name)
+    await addProductToCart(browser, testData.products[0].name)
     await assert('cart opened', async () => {
       await expect(shopPage.cart.contentBlock).toBeDisplayed()
     })
@@ -39,28 +53,24 @@ describe('Shopping cart tests', () => {
     await assert('product row shown in cart', async () => {
       await expect(productRow.rootEl).toBeDisplayed()
     })
-    await assert('cart counter', async () => {
-      await expect(shopPage.cart.counter).toHaveText('1')
-    })
-    await shopPage.toggleCart()
+    await checkCartCounter(shopPage, 1)
+    await toggleCart(shopPage)
     await assert('cart opened', async () => {
       await expect(shopPage.cart.contentBlock).not.toBeDisplayed()
     })
-    await assert('cart counter', async () => {
-      await expect(shopPage.cart.counter).toHaveText('1')
-    })
+    await checkCartCounter(shopPage, 1)
   })
 
   it('Subtotal calculated correctly when products added to cart', async () => {
     const firstProductRow = shopPage.getProductRowInCart(testData.products[0].name)
     const secondProductRow = shopPage.getProductRowInCart(testData.products[1].name)
 
-    await shopPage.addProductToCart(testData.products[0].name)
+    await addProductToCart(browser, testData.products[0].name)
     await assert('cart opened', async () => {
       await expect(shopPage.cart.contentBlock).toBeDisplayed()
     })
 
-    await shopPage.addProductToCart(testData.products[1].name)
+    await addProductToCart(browser, testData.products[1].name)
     await assert('product 1 in cart', async () => {
       await expect(firstProductRow.rootEl).toBeDisplayed()
     })
@@ -69,28 +79,26 @@ describe('Shopping cart tests', () => {
     })
     await assert('product 1 price label', async () => {
       await expect(firstProductRow.priceLabel)
-        .toHaveText(getPriceLabelForPrices(testData.products[0].price))
+        .toHaveText(getPriceText(testData.products[0].price))
     })
     await assert('product 2 price label', async () => {
       await expect(secondProductRow.priceLabel)
-        .toHaveText(getPriceLabelForPrices(testData.products[1].price))
+        .toHaveText(getPriceText(testData.products[1].price))
     })
     await assert('product count in cart', async () => {
       await expect(await shopPage.cart.productRows.length).toBe(2)
     })
-    await assert('cart counter', async () => {
-      await expect(shopPage.cart.counter).toHaveText('2')
-    })
+    await checkCartCounter(shopPage, 2)
     await assert('cart subtotal', async () => {
       await expect(shopPage.cart.subTotalLabel)
-        .toHaveText(getPriceLabelForPrices(
+        .toHaveText(getPriceText(
           [testData.products[0].price, testData.products[1].price]))
     })
   })
 
   it('A product can be removed from the cart', async () => {
-    await shopPage.addProductToCart(testData.products[0].name)
-    await shopPage.addProductToCart(testData.products[1].name)
+    await addProductToCart(browser, testData.products[0].name)
+    await addProductToCart(browser, testData.products[1].name)
     await assert('cart opened', async () => {
       await expect(shopPage.cart.contentBlock).toBeDisplayed()
     })
@@ -108,7 +116,7 @@ describe('Shopping cart tests', () => {
       await expect(await shopPage.cart.productRows.length).toBe(2)
     })
 
-    await productRow1.removeFromCart()
+    await removeFromCart(browser, testData.products[0].name)
     await assert('product 1 removed', async () => {
       await expect(productRow1.rootEl).not.toBeDisplayed()
     })
@@ -117,39 +125,35 @@ describe('Shopping cart tests', () => {
     })
     await assert('cart subtotal', async () => {
       await expect(shopPage.cart.subTotalLabel)
-        .toHaveText(getPriceLabelForPrices(testData.products[1].price))
+        .toHaveText(getPriceText(testData.products[1].price))
     })
   })
 
   it('Products can be filtered by size with one filter applied', async () => {
     const sizeFilterML = shopPage.getSizeFilter('ML')
-    await sizeFilterML.click()
+    await clickOnSizeFilter(browser, 'ML')
     await assert('size filter checked', async () => {
       await expect(sizeFilterML.checkbox).toBeChecked()
     })
-    await assert('product count', async () => {
-      await expect(await shopPage.productCards.length).toBe(2)
-    })
+    await checkProductCardsCount(shopPage, 2)
 
-    await sizeFilterML.click()
+    await clickOnSizeFilter(browser, 'ML')
     await assert('size filter unchecked', async () => {
       await expect(sizeFilterML.checkbox).not.toBeChecked()
     })
 
     const sizeFilterXS = shopPage.getSizeFilter('XS')
-    await sizeFilterXS.click()
+    await clickOnSizeFilter(browser, 'XS')
     await assert('size filter checked', async () => {
       await expect(sizeFilterXS.checkbox).toBeChecked()
     })
-    await assert('product count', async () => {
-      await expect(await shopPage.productCards.length).toBe(1)
-    })
+    await checkProductCardsCount(shopPage, 1)
   })
 
   it('Product amount in cart can be updated', async () => {
     const productRow = shopPage.getProductRowInCart(testData.products[1].name)
 
-    await shopPage.addProductToCart(testData.products[1].name)
+    await addProductToCart(browser, testData.products[1].name)
     await assert('cart opened', async () => {
       await expect(shopPage.cart.contentBlock).toBeDisplayed()
     })
@@ -161,53 +165,53 @@ describe('Shopping cart tests', () => {
     })
     await assert('product price', async () => {
       await expect(productRow.priceLabel)
-        .toHaveText(getPriceLabelForPrices(testData.products[1].price))
+        .toHaveText(getPriceText(testData.products[1].price))
     })
 
-    await productRow.increaseQuantity()
+    await increaseQuantity(browser, testData.products[1].name)
     await assert('product quantity', async () => {
       await expect(productRow.descriptionBlock).toHaveText(new RegExp('Quantity: 2$'))
     })
     await assert('product price', async () => {
       await expect(productRow.priceLabel)
-        .toHaveText(getPriceLabelForPrices(testData.products[1].price))
+        .toHaveText(getPriceText(testData.products[1].price))
     })
     await assert('cart subtotal', async () => {
       await expect(shopPage.cart.subTotalLabel)
-        .toHaveText(getPriceLabelForPrices(new Array(2).fill(testData.products[1].price)))
+        .toHaveText(getPriceText(new Array(2).fill(testData.products[1].price)))
     })
 
-    await productRow.increaseQuantity()
+    await increaseQuantity(browser, testData.products[1].name)
     await assert('product quantity', async () => {
       await expect(productRow.descriptionBlock).toHaveText(new RegExp('Quantity: 3$'))
     })
     await assert('product price', async () => {
       await expect(productRow.priceLabel)
-        .toHaveText(getPriceLabelForPrices(testData.products[1].price))
+        .toHaveText(getPriceText(testData.products[1].price))
     })
     await assert('cart subtotal', async () => {
       await expect(shopPage.cart.subTotalLabel)
-        .toHaveText(getPriceLabelForPrices(new Array(3).fill(testData.products[1].price)))
+        .toHaveText(getPriceText(new Array(3).fill(testData.products[1].price)))
     })
 
-    await productRow.decreaseQuantity()
+    await decreaseQuantity(browser, testData.products[1].name)
     await assert('product quantity', async () => {
       await expect(productRow.descriptionBlock).toHaveText(new RegExp('Quantity: 2$'))
     })
     await assert('product price', async () => {
       await expect(productRow.priceLabel)
-        .toHaveText(getPriceLabelForPrices(testData.products[1].price))
+        .toHaveText(getPriceText(testData.products[1].price))
     })
     await assert('cart subtotal', async () => {
       await expect(shopPage.cart.subTotalLabel)
-        .toHaveText(getPriceLabelForPrices(new Array(2).fill(testData.products[1].price)))
+        .toHaveText(getPriceText(new Array(2).fill(testData.products[1].price)))
     })
   })
 
   it('Correct checkout alert shown with one product', async () => {
     const productRow = shopPage.getProductRowInCart(testData.products[2].name)
 
-    await shopPage.addProductToCart(testData.products[2].name)
+    await addProductToCart(browser, testData.products[2].name)
     await assert('cart opened', async () => {
       await expect(shopPage.cart.contentBlock).toBeDisplayed()
     })
@@ -215,9 +219,12 @@ describe('Shopping cart tests', () => {
       await expect(productRow.rootEl).toBeDisplayed()
     })
 
-    await shopPage.cart.clickCheckout()
+    await clickCheckout(browser)
     await assert('checkout alert text', async () => {
-      await waitForAlert(browser, getExpectedAlertText(testData.products[2].price))
+      await waitForAlert(browser, getPriceText(
+        testData.products[2].price,
+        { checkoutAlert: true }
+      ))
     })
   })
 
@@ -226,17 +233,17 @@ describe('Shopping cart tests', () => {
     const productRow2 = shopPage.getProductRowInCart(testData.products[3].name)
     const productRow3 = shopPage.getProductRowInCart(testData.products[4].name)
 
-    await shopPage.addProductToCart(testData.products[1].name)
+    await addProductToCart(browser, testData.products[1].name)
     await assert('product 1 in cart', async () => {
       await expect(productRow1.rootEl).toBeDisplayed()
     })
-    await shopPage.toggleCart()
-    await shopPage.addProductToCart(testData.products[3].name)
+    await toggleCart(shopPage)
+    await addProductToCart(browser, testData.products[3].name)
     await assert('product 2 in cart', async () => {
       await expect(productRow2.rootEl).toBeDisplayed()
     })
-    await shopPage.toggleCart()
-    await shopPage.addProductToCart(testData.products[4].name)
+    await toggleCart(shopPage)
+    await addProductToCart(browser, testData.products[4].name)
     await assert('cart opened', async () => {
       await expect(shopPage.cart.contentBlock).toBeDisplayed()
     })
@@ -244,26 +251,27 @@ describe('Shopping cart tests', () => {
       await expect(productRow3.rootEl).toBeDisplayed()
     })
 
-    await shopPage.cart.clickCheckout()
+    await clickCheckout(browser)
     await assert('checkout alert text', async () => {
-      await waitForAlert(browser, getExpectedAlertText([
-        testData.products[1].price,
-        testData.products[3].price,
-        testData.products[4].price
-      ]))
+      await waitForAlert(browser, getPriceText(
+        [
+          testData.products[1].price,
+          testData.products[3].price,
+          testData.products[4].price
+        ],
+        { checkoutAlert: true }
+      ))
     })
   })
 
   it('Correct checkout alert shown with no products (with custom click)', async () => {
     const noProductsCheckoutText = 'Add some product in the cart!'
 
-    await shopPage.toggleCart({ highlight: true })
+    await toggleCart(shopPage, { highlight: true })
     await assert('cart opened', async () => {
       await expect(await shopPage.cart.contentBlock).toBeDisplayed()
     })
-    await assert('cart counter', async () => {
-      await expect(shopPage.cart.counter).toHaveText('0')
-    })
+    await checkCartCounter(shopPage, 0)
 
     await shopPage.cart.checkoutButton.highlightAndClick()
     await assert('checkout alert text', async () => {
@@ -316,7 +324,7 @@ describe('Shopping cart tests', () => {
     })
     const defaultImageUrl = (await productCard.image.getCSSProperty('background-image')).value
 
-    await shopPage.hoverOverProductCard(testData.products[0].name)
+    await hoverOverProductCard(browser, testData.products[0].name)
     const newImageUrl = (await productCard.image.getCSSProperty('background-image')).value
     await assert('image changed', async () => {
       await expect(newImageUrl).not.toEqual(defaultImageUrl)
