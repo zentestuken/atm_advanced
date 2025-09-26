@@ -161,7 +161,7 @@ describe('Shopping cart tests', () => {
       await expect(productRow.rootEl).toBeDisplayed()
     })
     await assert('product quantity', async () => {
-      await expect(productRow.descriptionBlock).toHaveText(new RegExp('Quantity: 1$'))
+      await expect(productRow.descriptionBlock).toHaveText(/Quantity: 1$/)
     })
     await assert('product price', async () => {
       await expect(productRow.priceLabel)
@@ -170,7 +170,7 @@ describe('Shopping cart tests', () => {
 
     await increaseQuantity(browser, testData.products[1].name)
     await assert('product quantity', async () => {
-      await expect(productRow.descriptionBlock).toHaveText(new RegExp('Quantity: 2$'))
+      await expect(productRow.descriptionBlock).toHaveText(/Quantity: 2$/)
     })
     await assert('product price', async () => {
       await expect(productRow.priceLabel)
@@ -183,7 +183,7 @@ describe('Shopping cart tests', () => {
 
     await increaseQuantity(browser, testData.products[1].name)
     await assert('product quantity', async () => {
-      await expect(productRow.descriptionBlock).toHaveText(new RegExp('Quantity: 3$'))
+      await expect(productRow.descriptionBlock).toHaveText(/Quantity: 3$/)
     })
     await assert('product price', async () => {
       await expect(productRow.priceLabel)
@@ -196,7 +196,7 @@ describe('Shopping cart tests', () => {
 
     await decreaseQuantity(browser, testData.products[1].name)
     await assert('product quantity', async () => {
-      await expect(productRow.descriptionBlock).toHaveText(new RegExp('Quantity: 2$'))
+      await expect(productRow.descriptionBlock).toHaveText(/Quantity: 2$/)
     })
     await assert('product price', async () => {
       await expect(productRow.priceLabel)
