@@ -21,6 +21,10 @@ pre-commit:
       root: "api_testing/"
       run: npm run lint-fix
       stage_fixed: true
+    webdriverio_taf_lint:
+      root: "webdriverio_taf/"
+      run: npm run lint-fix
+      stage_fixed: true
 pre-push:
   commands:
     unit_tests:
