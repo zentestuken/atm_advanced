@@ -96,7 +96,7 @@ export default defineConfig({
   webServer: {
     command: 'npm run start',
     url: serverUrl,
-    cwd: path.resolve(__dirname, '../app'),
+    cwd: process.env.UI_APP_PATH || path.resolve(__dirname, '../app'),
     reuseExistingServer: !process.env.CI, 
     timeout: 40 * 1000,
   },
