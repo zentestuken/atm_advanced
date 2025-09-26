@@ -54,5 +54,5 @@ jobs:
           args: >
             -Dsonar.projectKey=atm-advanced
             -Dsonar.organization=training-corp
-            -Dsonar.sources=playwright_taf,playwright_taf_bdd,playwright_taf_runners,unit_testing,api_testing
+            -Dsonar.sources=playwright_taf,playwright_taf_bdd,playwright_taf_runners,unit_testing,api_testing,webdriverio_taf
             -Dsonar.exclusions=app/**,node_modules/**,artifacts/**,/coverage/**,src/**,html/**
