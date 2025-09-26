@@ -34,3 +34,24 @@ jobs:
       - name: Lint
         run: npm run lint
         working-directory: ${{ matrix.project }}
+
+  sonarcloud:
+    name: SonarCloud Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=atm-advanced
+            -Dsonar.organization=training-corp
+            -Dsonar.sources=playwright_taf,playwright_taf_bdd,playwright_taf_runners,unit_testing,api_testing
+            -Dsonar.exclusions=app/**,node_modules/**,artifacts/**,/coverage/**,src/**,html/**
