@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+    triggers {
+        cron('H 2 * * *')
+        githubPush()
+    }
+    environment {
+        UI_APP_PATH = '/home/jenkins/ui-app'
+    }
+    tools {
+        nodejs "NodeJS"
+    }
+    stages {
+        stage('Install Dependencies (playwright_taf)') {
+            steps {
+                dir('playwright_taf') {
+                    sh 'npm ci'
+                }
+            }
+        }
+        stage('Run tests (playwright_taf)') {
+            steps {
+                dir('playwright_taf') {
+                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                        sh 'npm test'
+                    }
+                }
+            }
+        }
+        stage('Publish Allure Report (playwright_taf)') {
+            steps {
+                allure([
+                    includeProperties: false,
+                    jdk: '',
+                    properties: [],
+                    reportBuildPolicy: 'ALWAYS',
+                    results: [[path: 'playwright_taf/artifacts/allure-results']]
+                ])
+            }
+        }
+    }
+}
