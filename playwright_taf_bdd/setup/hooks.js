@@ -155,80 +155,84 @@ After(async function (testCase) {
 });
 
 BeforeAll({ timeout: 60_000 }, async function () {
-  const appPath = process.env.UI_APP_PATH || path.resolve(__dirname, '../../app');
+  if (!process.env.CI) {
+    const appPath = path.resolve(__dirname, '../../app');
 
-  let isServerRunning = await checkServerRunning(config.baseUrl);
+    let isServerRunning = await checkServerRunning(config.baseUrl);
 
-  if (isServerRunning) {
-    return;
-  }
-
-  if (!createServerLock()) {
-    const success = await waitForServerStartup();
-    if (!success) {
-      throw new Error('Server startup by another worker failed or timed out');
+    if (isServerRunning) {
+      return;
     }
-    return;
-  }
 
-  try {
-    serverProcess = spawn('npm', ['run', 'start'], {
-      cwd: appPath,
-      stdio: 'inherit',
-      shell: true,
-    });
+    if (!createServerLock()) {
+      const success = await waitForServerStartup();
+      if (!success) {
+        throw new Error('Server startup by another worker failed or timed out');
+      }
+      return;
+    }
 
-    isServerRunning = await checkServerRunning(config.baseUrl, config.timeouts.serverStart);
+    try {
+      serverProcess = spawn('npm', ['run', 'start'], {
+        cwd: appPath,
+        stdio: 'inherit',
+        shell: true,
+      });
 
-    if (!isServerRunning) {
+      isServerRunning = await checkServerRunning(config.baseUrl, config.timeouts.serverStart);
+
+      if (!isServerRunning) {
+        removeServerLock();
+        throw new Error('Web server did not start within the expected time');
+      }
+    } catch (error) {
       removeServerLock();
-      throw new Error('Web server did not start within the expected time');
+      throw error;
     }
-  } catch (error) {
-    removeServerLock();
-    throw error;
   }
 });
 
 AfterAll(async function () {
-  if (serverProcess && isMyServerLock()) {
-    try {
-      serverProcess.kill('SIGTERM');
-      
-      await new Promise((resolve) => {
-        const timeout = setTimeout(() => {
-          try {
-            serverProcess.kill('SIGKILL');
-          } catch {
-            // Process might already be dead
-          }
-          resolve();
-        }, 5000);
-
-        serverProcess.on('exit', () => {
-          clearTimeout(timeout);
-          resolve();
-        });
-        
-        serverProcess.on('error', () => {
-          clearTimeout(timeout);
-          resolve();
-        });
-      });
-
+  if (!process.env.CI) {
+    if (serverProcess && isMyServerLock()) {
       try {
-        serverProcess.stdout?.destroy();
-        serverProcess.stderr?.destroy();
-      } catch {
-        // Streams might already be destroyed
-      }
+        serverProcess.kill('SIGTERM');
+        
+        await new Promise((resolve) => {
+          const timeout = setTimeout(() => {
+            try {
+              serverProcess.kill('SIGKILL');
+            } catch {
+              // Process might already be dead
+            }
+            resolve();
+          }, 5000);
 
-      removeServerLock();
-    } catch (error) {
-      console.error('Failed to stop the web server:', error);
+          serverProcess.on('exit', () => {
+            clearTimeout(timeout);
+            resolve();
+          });
+          
+          serverProcess.on('error', () => {
+            clearTimeout(timeout);
+            resolve();
+          });
+        });
+
+        try {
+          serverProcess.stdout?.destroy();
+          serverProcess.stderr?.destroy();
+        } catch {
+          // Streams might already be destroyed
+        }
+
+        removeServerLock();
+      } catch (error) {
+        console.error('Failed to stop the web server:', error);
+        removeServerLock();
+      }
+    } else if (isMyServerLock()) {
       removeServerLock();
     }
-  } else if (isMyServerLock()) {
-    removeServerLock();
   }
 });
