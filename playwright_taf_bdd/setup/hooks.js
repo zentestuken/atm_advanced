@@ -155,7 +155,7 @@ After(async function (testCase) {
 });
 
 BeforeAll({ timeout: 60_000 }, async function () {
-  const appPath = path.resolve(__dirname, '../../app');
+  const appPath = process.env.UI_APP_PATH || path.resolve(__dirname, '../../app');
 
   let isServerRunning = await checkServerRunning(config.baseUrl);
 
