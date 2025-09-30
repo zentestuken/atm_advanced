@@ -6,11 +6,19 @@ pipeline {
     }
     environment {
         UI_APP_PATH = '/home/jenkins/ui-app'
+        TEAMS_WORKFLOW = credentials('ms_teams_workflow')
     }
     tools {
         nodejs "NodeJS"
     }
     stages {
+        stage('Teams Notify (start)') {
+            steps {
+                script {
+                    sendTeamsMessage("ATM Adv Test Run STARTED")
+                }
+            }
+        }
         stage('Install Dependencies (playwright_taf)') {
             steps {
                 dir('playwright_taf') {
@@ -39,4 +47,26 @@ pipeline {
             }
         }
     }
+    post {
+        always {
+            script {
+                sendTeamsMessage("ATM Adv Test Run FINISHED - ${currentBuild.result}")
+            }
+        }
+    }
+}
+
+def sendTeamsMessage(title) {
+    def payload = """
+    {
+        "type": "${title}",
+        "version": "<strong>Job:</strong> ${env.JOB_NAME}<br><strong>Build:</strong> <a href=\\"${env.BUILD_URL}\\">#${env.BUILD_NUMBER}</a><br><strong>Branch:</strong> ${env.BRANCH_NAME}<br><strong>Status:</strong> ${currentBuild.result ?: 'IN PROGRESS'}"
+    }
+    """
+    sh """
+        curl -X POST \
+             -H 'Content-Type: application/json' \
+             -d '${payload}' \
+             '${env.TEAMS_WORKFLOW}'
+    """
 }
