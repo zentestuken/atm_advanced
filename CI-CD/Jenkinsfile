@@ -7,7 +7,7 @@ pipeline {
     environment {
         UI_APP_PATH = '/home/jenkins/ui-app'
         TEAMS_WORKFLOW = credentials('ms_teams_workflow')
-        BRANCH_NAME=='main'
+        BRANCH_NAME = 'main'
     }
     tools {
         nodejs "NodeJS"
