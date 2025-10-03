@@ -28,14 +28,14 @@ pipeline {
                 }
             }
         }
-        stage("Install Dependencies (${env.PROJECT_DIR})") {
+        stage('Install Dependencies') {
             steps {
                 dir(env.PROJECT_DIR) {
                     sh 'npm ci'
                 }
             }
         }
-        stage("Run tests (${env.PROJECT_DIR})") {
+        stage('Run tests') {
             steps {
                 dir(env.PROJECT_DIR) {
                     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
@@ -44,7 +44,7 @@ pipeline {
                 }
             }
         }
-        stage("Publish Allure Report (${env.PROJECT_DIR})") {
+        stage('Publish Allure Report') {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     allure([
