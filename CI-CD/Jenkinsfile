@@ -75,7 +75,7 @@ pipeline {
                         try {
                             if (fileExists('artifacts/temp-results.json')) {
     
-                                sh 'node utils/generate-xray-payload.js'
+                                sh 'node utils/generate-xray-results.js'
     
                                 def token = sh(
                                     script: """
