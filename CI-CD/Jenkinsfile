@@ -77,7 +77,7 @@ pipeline {
     
                                 sh 'node utils/generate-xray-results.js'
     
-                                def token = sh(
+                                def xray_token = sh(
                                     script: """
                                         curl -s -X POST -H "Content-Type: application/json" \
                                           -d '{ "client_id": "${env.XRAY_CLIENT_ID}", "client_secret": "${env.XRAY_CLIENT_SECRET}" }' \
@@ -85,17 +85,18 @@ pipeline {
                                     """,
                                     returnStdout: true
                                 ).trim()
-                                    sh """
-                                        echo 'Sending test results to Jira...'
-                                        set +x
-                                        curl -s -X POST \
-                                          -H "Authorization: Bearer $XRAY_TOKEN" \
-                                          -H "Content-Type: application/json" \
-                                          --data @artifacts/xray-results.json \
-                                          https://xray.cloud.getxray.app/api/v2/import/execution
-                                        set -x
-                                        echo 'Test results successfully sent to Jira.'
-                                    """
+
+                                echo 'Sending test results to Jira...'
+                                sh """
+                                    set +x
+                                    curl -s -X POST \
+                                      -H "Authorization: Bearer ${xray_token}" \
+                                      -H "Content-Type: application/json" \
+                                      --data @artifacts/xray-results.json \
+                                      https://xray.cloud.getxray.app/api/v2/import/execution
+                                    set -x
+                                """
+                                echo 'Test results successfully sent to Jira.'
                             } else {
                                 echo 'No Playwright JSON report found, skipping Xray upload.'
                             }
