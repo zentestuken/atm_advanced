@@ -7,12 +7,12 @@ test.beforeEach(async ({ shopPage }) => {
   await expect(shopPage.productCards).not.toHaveCount(0);
 });
 
-test('Verify default product cards count', async ({ shopPage  }) => {
+test('[ATMADV-10] Verify default product cards count', async ({ shopPage  }) => {
   await expect(shopPage.page).toHaveTitle(testData.shopPageTitle);
   await expect(shopPage.productCards).toHaveCount(testData.defaultProductsCount);
 });
 
-test('Product can be added to cart', async ({ shopPage  }) => {
+test('[ATMADV-11] Product can be added to cart', async ({ shopPage  }) => {
   await test.step('When product is  added to cart', async () => {
     await shopPage.addProductToCart(testData.products[0].name);
   });
@@ -37,7 +37,7 @@ test('Product can be added to cart', async ({ shopPage  }) => {
   });
 });
 
-test('Subtotal calculated correctly when products added to cart', async ({ shopPage  }) => {
+test('[ATMADV-12] Subtotal calculated correctly when products added to cart', async ({ shopPage  }) => {
   let firstProductRow, secondProductRow;
 
   await test.step('When first product is added to cart', async () => {

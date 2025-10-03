@@ -6,37 +6,126 @@ pipeline {
     }
     environment {
         UI_APP_PATH = '/home/jenkins/ui-app'
+        TEAMS_WORKFLOW = credentials('ms_teams_workflow')
+        BRANCH_NAME = 'main'
+        XRAY_CLIENT_ID = credentials('xray_client_id')
+        XRAY_CLIENT_SECRET = credentials('xray_client_secret')
+        JIRA_TESTPLAN = 'ATMADV-13'
+        JIRA_SUMMARY = "Automated test run: ${env.BUILD_URL}"
+        JIRA_URL = 'https://atm-advanced-yauhen.atlassian.net'
+        PROJECT_DIR = 'playwright_taf'
     }
     tools {
         nodejs "NodeJS"
     }
     stages {
-        stage('Install Dependencies (playwright_taf)') {
+        stage('Teams Notify (start)') {
             steps {
-                dir('playwright_taf') {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    script {
+                        sendTeamsMessage("ATM Adv Test Run STARTED")
+                    }
+                }
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                dir(env.PROJECT_DIR) {
                     sh 'npm ci'
                 }
             }
         }
-        stage('Run tests (playwright_taf)') {
+        stage('Run tests') {
             steps {
-                dir('playwright_taf') {
+                dir(env.PROJECT_DIR) {
                     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                         sh 'npm test'
                     }
                 }
             }
         }
-        stage('Publish Allure Report (playwright_taf)') {
+        stage('Publish Allure Report') {
             steps {
-                allure([
-                    includeProperties: false,
-                    jdk: '',
-                    properties: [],
-                    reportBuildPolicy: 'ALWAYS',
-                    results: [[path: 'playwright_taf/artifacts/allure-results']]
-                ])
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    allure([
+                        includeProperties: false,
+                        jdk: '',
+                        properties: [],
+                        reportBuildPolicy: 'ALWAYS',
+                        results: [[path: "${env.PROJECT_DIR}/artifacts/allure-results"]]
+                    ])
+                }
             }
         }
     }
+    post {
+        always {
+            script {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    def failed = false
+
+                    try {
+                        sendTeamsMessage("ATM Adv Test Run FINISHED - ${currentBuild.result}")
+                    } catch (err) {
+                        echo "ERROR: MS Teams notification failed: ${err}"
+                        failed = true
+                    }
+
+                    dir(env.PROJECT_DIR) {
+                        try {
+                            if (fileExists('artifacts/temp-results.json')) {
+    
+                                sh 'node utils/generate-xray-results.js'
+    
+                                def xray_token = sh(
+                                    script: """
+                                        curl -s -X POST -H "Content-Type: application/json" \
+                                          -d '{ "client_id": "${env.XRAY_CLIENT_ID}", "client_secret": "${env.XRAY_CLIENT_SECRET}" }' \
+                                          https://xray.cloud.getxray.app/api/v1/authenticate | tr -d '"'
+                                    """,
+                                    returnStdout: true
+                                ).trim()
+
+                                echo 'Sending test results to Jira...'
+                                sh """
+                                    set +x
+                                    curl -s -X POST \
+                                      -H "Authorization: Bearer ${xray_token}" \
+                                      -H "Content-Type: application/json" \
+                                      --data @artifacts/xray-results.json \
+                                      https://xray.cloud.getxray.app/api/v2/import/execution
+                                    set -x
+                                """
+                                echo 'Test results successfully sent to Jira.'
+                            } else {
+                                echo 'No Playwright JSON report found, skipping Xray upload.'
+                            }
+                        } catch (err) {
+                            echo "ERROR: Xray upload failed: ${err}"
+                            failed = true
+                        }
+                    }
+
+                    if (failed) {
+                        error("One or more post-actions failed")
+                    }
+                }
+            }
+        }
+    }
+}
+
+def sendTeamsMessage(title) {
+    def payload = """
+    {
+        "type": "${title}",
+        "version": "<strong>Job:</strong> ${env.JOB_NAME}<br><strong>Build:</strong> <a href=\\"${env.BUILD_URL}\\">#${env.BUILD_NUMBER}</a><br><strong>Test plan:</strong> <a href=\\"${env.JIRA_URL}/browse/${env.JIRA_TESTPLAN}\\">#${env.JIRA_TESTPLAN}</a><br><strong>Branch:</strong> ${env.BRANCH_NAME}<br><strong>Status:</strong> ${currentBuild.result ?: 'IN PROGRESS'}"
+    }
+    """
+    sh """
+        curl -X POST \
+             -H 'Content-Type: application/json' \
+             -d '${payload}' \
+             '${env.TEAMS_WORKFLOW}'
+    """
 }
