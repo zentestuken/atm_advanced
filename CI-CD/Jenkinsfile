@@ -13,6 +13,7 @@ pipeline {
         JIRA_TESTPLAN = 'ATMADV-13'
         JIRA_SUMMARY = "Automated test run: ${env.BUILD_URL}"
         JIRA_URL = 'https://atm-advanced-yauhen.atlassian.net'
+        PROJECT_DIR = 'playwright_taf'
     }
     tools {
         nodejs "NodeJS"
@@ -27,23 +28,23 @@ pipeline {
                 }
             }
         }
-        stage('Install Dependencies (playwright_taf)') {
+        stage("Install Dependencies (${env.PROJECT_DIR})") {
             steps {
-                dir('playwright_taf') {
+                dir(env.PROJECT_DIR) {
                     sh 'npm ci'
                 }
             }
         }
-        stage('Run tests (playwright_taf)') {
+        stage("Run tests (${env.PROJECT_DIR})") {
             steps {
-                dir('playwright_taf') {
+                dir(env.PROJECT_DIR) {
                     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                         sh 'npm test'
                     }
                 }
             }
         }
-        stage('Publish Allure Report (playwright_taf)') {
+        stage("Publish Allure Report (${env.PROJECT_DIR})") {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     allure([
@@ -51,7 +52,7 @@ pipeline {
                         jdk: '',
                         properties: [],
                         reportBuildPolicy: 'ALWAYS',
-                        results: [[path: 'playwright_taf/artifacts/allure-results']]
+                        results: [[path: "${env.PROJECT_DIR}/artifacts/allure-results"]]
                     ])
                 }
             }
@@ -70,33 +71,35 @@ pipeline {
                         failed = true
                     }
 
-                    try {
-                        if (fileExists('artifacts/temp-results.json')) {
-
-                            sh 'node generate-xray-payload.js'
-
-                            def token = sh(
-                                script: """
-                                    curl -s -X POST -H "Content-Type: application/json" \
-                                      -d '{ "client_id": "${env.XRAY_CLIENT_ID}", "client_secret": "${env.XRAY_CLIENT_SECRET}" }' \
-                                      https://xray.cloud.getxray.app/api/v1/authenticate | tr -d '"'
-                                """,
-                                returnStdout: true
-                            ).trim()
-
-                            sh """
-                                curl -s -X POST \
-                                  -H "Authorization: Bearer ${token}" \
-                                  -H "Content-Type: application/json" \
-                                  --data @artifacts/xray-results.json \
-                                  https://xray.cloud.getxray.app/api/v2/import/execution
-                            """
-                        } else {
-                            echo 'No Playwright JSON report found, skipping Xray upload.'
+                    dir(env.PROJECT_DIR) {
+                        try {
+                            if (fileExists('artifacts/temp-results.json')) {
+    
+                                sh 'node generate-xray-payload.js'
+    
+                                def token = sh(
+                                    script: """
+                                        curl -s -X POST -H "Content-Type: application/json" \
+                                          -d '{ "client_id": "${env.XRAY_CLIENT_ID}", "client_secret": "${env.XRAY_CLIENT_SECRET}" }' \
+                                          https://xray.cloud.getxray.app/api/v1/authenticate | tr -d '"'
+                                    """,
+                                    returnStdout: true
+                                ).trim()
+    
+                                sh """
+                                    curl -s -X POST \
+                                      -H "Authorization: Bearer ${token}" \
+                                      -H "Content-Type: application/json" \
+                                      --data @artifacts/xray-results.json \
+                                      https://xray.cloud.getxray.app/api/v2/import/execution
+                                """
+                            } else {
+                                echo 'No Playwright JSON report found, skipping Xray upload.'
+                            }
+                        } catch (err) {
+                            echo "ERROR: Xray upload failed: ${err}"
+                            failed = true
                         }
-                    } catch (err) {
-                        echo "ERROR: Xray upload failed: ${err}"
-                        failed = true
                     }
 
                     if (failed) {
