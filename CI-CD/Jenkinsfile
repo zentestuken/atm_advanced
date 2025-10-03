@@ -85,7 +85,7 @@ pipeline {
                                     """,
                                     returnStdout: true
                                 ).trim()
-                                withEnv(["XRAY_TOKEN=${token}"])
+                                withEnv(["XRAY_TOKEN=${token}"]) {
                                     sh """
                                         curl -s -X POST \
                                           -H "Authorization: Bearer $XRAY_TOKEN" \
