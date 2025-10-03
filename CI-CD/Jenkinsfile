@@ -8,6 +8,11 @@ pipeline {
         UI_APP_PATH = '/home/jenkins/ui-app'
         TEAMS_WORKFLOW = credentials('ms_teams_workflow')
         BRANCH_NAME = 'main'
+        XRAY_CLIENT_ID = credentials('xray_client_id')
+        XRAY_CLIENT_SECRET = credentials('xray_client_secret')
+        JIRA_TESTPLAN = 'ATMADV-13'
+        JIRA_SUMMARY = "Automated test run: ${env.BUILD_URL}"
+        JIRA_URL = 'https://atm-advanced-yauhen.atlassian.net'
     }
     tools {
         nodejs "NodeJS"
@@ -15,8 +20,10 @@ pipeline {
     stages {
         stage('Teams Notify (start)') {
             steps {
-                script {
-                    sendTeamsMessage("ATM Adv Test Run STARTED")
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    script {
+                        sendTeamsMessage("ATM Adv Test Run STARTED")
+                    }
                 }
             }
         }
@@ -38,20 +45,64 @@ pipeline {
         }
         stage('Publish Allure Report (playwright_taf)') {
             steps {
-                allure([
-                    includeProperties: false,
-                    jdk: '',
-                    properties: [],
-                    reportBuildPolicy: 'ALWAYS',
-                    results: [[path: 'playwright_taf/artifacts/allure-results']]
-                ])
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    allure([
+                        includeProperties: false,
+                        jdk: '',
+                        properties: [],
+                        reportBuildPolicy: 'ALWAYS',
+                        results: [[path: 'playwright_taf/artifacts/allure-results']]
+                    ])
+                }
             }
         }
     }
     post {
         always {
             script {
-                sendTeamsMessage("ATM Adv Test Run FINISHED - ${currentBuild.result}")
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    def failed = false
+
+                    try {
+                        sendTeamsMessage("ATM Adv Test Run FINISHED - ${currentBuild.result}")
+                    } catch (err) {
+                        echo "ERROR: MS Teams notification failed: ${err}"
+                        failed = true
+                    }
+
+                    try {
+                        if (fileExists('artifacts/temp-results.json')) {
+
+                            sh 'node generate-xray-payload.js'
+
+                            def token = sh(
+                                script: """
+                                    curl -s -X POST -H "Content-Type: application/json" \
+                                      -d '{ "client_id": "${env.XRAY_CLIENT_ID}", "client_secret": "${env.XRAY_CLIENT_SECRET}" }' \
+                                      https://xray.cloud.getxray.app/api/v1/authenticate | tr -d '"'
+                                """,
+                                returnStdout: true
+                            ).trim()
+
+                            sh """
+                                curl -s -X POST \
+                                  -H "Authorization: Bearer ${token}" \
+                                  -H "Content-Type: application/json" \
+                                  --data @artifacts/xray-results.json \
+                                  https://xray.cloud.getxray.app/api/v2/import/execution
+                            """
+                        } else {
+                            echo 'No Playwright JSON report found, skipping Xray upload.'
+                        }
+                    } catch (err) {
+                        echo "ERROR: Xray upload failed: ${err}"
+                        failed = true
+                    }
+
+                    if (failed) {
+                        error("One or more post-actions failed")
+                    }
+                }
             }
         }
     }
@@ -61,7 +112,7 @@ def sendTeamsMessage(title) {
     def payload = """
     {
         "type": "${title}",
-        "version": "<strong>Job:</strong> ${env.JOB_NAME}<br><strong>Build:</strong> <a href=\\"${env.BUILD_URL}\\">#${env.BUILD_NUMBER}</a><br><strong>Branch:</strong> ${env.BRANCH_NAME}<br><strong>Status:</strong> ${currentBuild.result ?: 'IN PROGRESS'}"
+        "version": "<strong>Job:</strong> ${env.JOB_NAME}<br><strong>Build:</strong> <a href=\\"${env.BUILD_URL}\\">#${env.BUILD_NUMBER}</a><br><strong>Test plan:</strong> <a href=\\"${env.JIRA_URL}/browse/${env.JIRA_TESTPLAN}\\">#${env.JIRA_TESTPLAN}</a><br><strong>Branch:</strong> ${env.BRANCH_NAME}<br><strong>Status:</strong> ${currentBuild.result ?: 'IN PROGRESS'}"
     }
     """
     sh """
