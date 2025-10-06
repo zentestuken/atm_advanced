@@ -39,7 +39,7 @@ export function getPageProductCounterText (browser) {
     const locator = browser.$(`//p[contains(., '${PAGE_PRODUCT_COUNTER_POSTFIX}')]`)
     const textContent = await locator.getText()
     const match = textContent.match(/\d+/)
-    const number = match ? parseInt(match[0], 10) : ''
+    const number = match ? Number.parseInt(match[0], 10) : ''
     return number
   })
 }

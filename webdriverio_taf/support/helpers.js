@@ -23,7 +23,7 @@ export function assert(description, assertionFn) {
 export const getPriceText = (prices, { checkoutAlert = false } = {}) => {
   let priceLabels = Array.isArray(prices) ? prices : [prices]
   const sum = priceLabels
-    .reduce((acc, priceLabel) => acc + parseFloat(priceLabel), 0)
+    .reduce((acc, priceLabel) => acc + Number.parseFloat(priceLabel), 0)
     .toFixed(2)
   if (checkoutAlert) return new RegExp(`^Checkout - Subtotal: \\$\\s*${sum}`)
   else return new RegExp(`^\\$\\s*${sum}`)
@@ -31,11 +31,11 @@ export const getPriceText = (prices, { checkoutAlert = false } = {}) => {
 
 export const setupAlertCapture = (browser) => {
   return browser.execute(() => {
-    window.testAlerts = []
-    window.originalAlert = window.alert
+    globalThis.testAlerts = []
+    globalThis.originalAlert = globalThis.alert
 
-    window.alert = function(message) {
-      window.testAlerts.push({
+    globalThis.alert = function(message) {
+      globalThis.testAlerts.push({
         message: message,
         timestamp: Date.now()
       })
@@ -46,8 +46,8 @@ export const setupAlertCapture = (browser) => {
 
 const getLastAlert = (browser) => {
   return browser.execute(() => {
-    const alerts = window.testAlerts || []
-    return alerts.length > 0 ? alerts[alerts.length - 1] : null
+    const alerts = globalThis.testAlerts || []
+    return alerts.length > 0 ? alerts.at(-1) : null
   })
 }
 

@@ -5,8 +5,9 @@ import SizeFilter from '../components/sizeFilter.component'
 import { step } from '../../support/helpers'
 
 class ShopPage {
+  url = '/'
+
   constructor (browser) {
-    this.url = '/'
     this.browser = browser
     this.cart = new Cart(browser)
   }

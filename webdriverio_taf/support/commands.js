@@ -1,6 +1,6 @@
 import { step } from '../support/helpers.js'
 
-export default () => {
+const registerCustomCommands = () => {
   browser.addCommand('scrollToElement', function (targetElement) {
     return step('Scroll to element', async () => {
       const element = typeof targetElement === 'function'
@@ -81,3 +81,5 @@ export default () => {
     })
   })
 }
+
+export default registerCustomCommands
