@@ -1,4 +1,3 @@
-// @ts-check
 import { defineConfig, devices } from '@playwright/test';
 import path from 'path';
 import fs from 'fs';
@@ -6,9 +5,33 @@ import fs from 'fs';
 const allureResultsPath = path.join(__dirname, 'artifacts/allure-results');
 const serverUrl = 'http://localhost:3000';
 
-/**
- * @see https://playwright.dev/docs/test-configuration
- */
+const rpConfig = {
+  apiKey: process.env.RP_APIKEY,
+  endpoint: process.env.RP_ENDPOINT || 'https://reportportal.epam.com/api/v1',
+  project: process.env.RP_PROJECT || 'yauhen_viazau_personal',
+  launch: process.env.RP_LAUNCH || 'ATM Advanced Auto-Test Run',
+  attributes: [
+    {
+      key: 'project',
+      value: 'playwright_taf',
+    },
+  ],
+  description: 'Automated test run',
+};
+
+const reporters = [
+  ['allure-playwright', {
+      resultsDir: 'artifacts/allure-results',
+      clearFiles: true, 
+    }
+  ],
+  ["list"],
+  ['json', { outputFile: 'artifacts/temp-results.json' }],
+];
+
+if (process.env.CI && process.env.RP_APIKEY) {
+  reporters.push(['@reportportal/agent-js-playwright', rpConfig]);
+}
 
 function clearAllureResults() {
   if (fs.existsSync(allureResultsPath)) {
@@ -30,15 +53,7 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [
-    ['allure-playwright', {
-        resultsDir: 'artifacts/allure-results',
-        clearFiles: true, 
-      }
-    ],
-    ["list"],
-    ['json', { outputFile: 'artifacts/temp-results.json' }]
-  ],
+  reporter: reporters,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */

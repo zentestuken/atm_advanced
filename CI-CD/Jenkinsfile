@@ -5,15 +5,23 @@ pipeline {
         githubPush()
     }
     environment {
-        UI_APP_PATH = '/home/jenkins/ui-app'
-        TEAMS_WORKFLOW = credentials('ms_teams_workflow')
         BRANCH_NAME = 'main'
+        PROJECT_DIR = 'playwright_taf'
+
+        UI_APP_PATH = '/home/jenkins/ui-app'
+
+        TEAMS_WORKFLOW = credentials('ms_teams_workflow')
+
         XRAY_CLIENT_ID = credentials('xray_client_id')
         XRAY_CLIENT_SECRET = credentials('xray_client_secret')
         JIRA_TESTPLAN = 'ATMADV-13'
         JIRA_SUMMARY = "Automated test run: ${env.BUILD_URL}"
         JIRA_URL = 'https://atm-advanced-yauhen.atlassian.net'
-        PROJECT_DIR = 'playwright_taf'
+
+        RP_APIKEY = credentials('reportportal_token')
+        RP_PROJECT = 'yauhen_viazau_personal'
+        RP_ENDPOINT = 'https://reportportal.epam.com/api/v1'
+        RP_LAUNCH = 'ATM Advanced Auto-Test Run'
     }
     tools {
         nodejs "NodeJS"
