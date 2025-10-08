@@ -223,7 +223,7 @@ describe('Shopping cart tests', () => {
     await assert('checkout alert text', async () => {
       await waitForAlert(browser, getPriceText(
         testData.products[2].price,
-        { checkoutAlert: true }
+        testData.checkoutPricePrefix,
       ))
     })
   })
@@ -259,14 +259,12 @@ describe('Shopping cart tests', () => {
           testData.products[3].price,
           testData.products[4].price
         ],
-        { checkoutAlert: true }
+        testData.checkoutPricePrefix,
       ))
     })
   })
 
   it('Correct checkout alert shown with no products (with custom click)', async () => {
-    const noProductsCheckoutText = 'Add some product in the cart!'
-
     await toggleCart(shopPage, { highlight: true })
     await assert('cart opened', async () => {
       await expect(await shopPage.cart.contentBlock).toBeDisplayed()
@@ -275,7 +273,7 @@ describe('Shopping cart tests', () => {
 
     await shopPage.cart.checkoutButton.highlightAndClick()
     await assert('checkout alert text', async () => {
-      await waitForAlert(browser, noProductsCheckoutText)
+      await waitForAlert(browser, testData.checkoutAlertTextNoProducts)
     })
   })
 

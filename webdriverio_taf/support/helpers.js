@@ -20,13 +20,12 @@ export function assert(description, assertionFn) {
   })
 }
 
-export const getPriceText = (prices, { checkoutAlert = false } = {}) => {
+export const getPriceText = (prices, prefix = '') => {
   let priceLabels = Array.isArray(prices) ? prices : [prices]
   const sum = priceLabels
     .reduce((acc, priceLabel) => acc + Number.parseFloat(priceLabel), 0)
     .toFixed(2)
-  if (checkoutAlert) return new RegExp(`^Checkout - Subtotal: \\$\\s*${sum}`)
-  else return new RegExp(`^\\$\\s*${sum}`)
+  return new RegExp(`^${prefix}\\$\\s*${sum}`)
 }
 
 export const setupAlertCapture = (browser) => {

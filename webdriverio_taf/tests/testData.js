@@ -26,5 +26,7 @@ export default {
   addToCartButton: {
     colorDefault: 'rgba(27,26,32,1)',
     colorHover: 'rgba(234,191,0,1)',
-  }
+  },
+  checkoutPricePrefix: 'Checkout - Subtotal: ',
+  checkoutAlertTextNoProducts: 'Add some product in the cart!',
 }
